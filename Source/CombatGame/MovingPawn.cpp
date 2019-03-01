@@ -28,6 +28,6 @@ void AMovingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-UVelocityMovementComponent* AMovingPawn::GetMovementComponent() {
+UVelocityMovementComponent* AMovingPawn::GetMovement() {
 	return movementComponent;
 }

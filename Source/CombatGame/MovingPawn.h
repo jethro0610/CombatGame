@@ -31,5 +31,5 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable)
-		UVelocityMovementComponent* GetMovementComponent();
+		UVelocityMovementComponent* GetMovement();
 };
