@@ -30,14 +30,6 @@ private:
 		UVelocityMovementComponent* movementComponent;
 
 public:
-	FHitResult GetGroundTrace();
-	bool IsOnGround();
-
-	FVector GetVelocity();
-	FVector GetVelocityNoGravity();
-	void AddVelocity(FVector deltaVelocity);
-	void SetVelocity(FVector newVelocity);
-
-	void Walk(FVector walkDirection, float DeltaTime);
-	void Move(FVector deltaVector);
+	UFUNCTION(BlueprintCallable)
+		UVelocityMovementComponent* GetMovementComponent();
 };

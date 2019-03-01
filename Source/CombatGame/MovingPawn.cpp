@@ -28,34 +28,6 @@ void AMovingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-FHitResult AMovingPawn::GetGroundTrace() {
-	return movementComponent->GetGroundTrace();
-}
-
-bool AMovingPawn::IsOnGround() {
-	return movementComponent->IsOnGround();
-}
-
-FVector AMovingPawn::GetVelocity() {
-	return movementComponent->GetVelocity();
-}
-
-FVector AMovingPawn::GetVelocityNoGravity() {
-	return movementComponent->GetVelocityNoGravity();
-}
-
-void AMovingPawn::AddVelocity(FVector deltaVelocity) {
-	movementComponent->AddVelocity(deltaVelocity);
-}
-
-void AMovingPawn::SetVelocity(FVector newVelocity) {
-	movementComponent->SetVelocity(newVelocity);
-}
-
-void AMovingPawn::Walk(FVector walkDirection, float DeltaTime) {
-	movementComponent->Walk(walkDirection, DeltaTime);
-}
-
-void AMovingPawn::Move(FVector deltaVector) {
-	movementComponent->Move(deltaVector);
+UVelocityMovementComponent* AMovingPawn::GetMovementComponent() {
+	return movementComponent;
 }
