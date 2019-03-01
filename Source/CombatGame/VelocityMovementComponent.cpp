@@ -48,7 +48,7 @@ void UVelocityMovementComponent::SetVelocity(FVector newVelocity) {
 void UVelocityMovementComponent::Walk(FVector walkDirection, float DeltaTime) {
 	if (IsOnGround() || bCanWalkInAir) {
 		float MultipliedDeltaTime = DeltaTime * 60.0f;
-		AddVelocity(walkDirection * acceleration * DeltaTime);
+		AddVelocity(walkDirection * acceleration * MultipliedDeltaTime);
 	}
 }
 
