@@ -10,11 +10,11 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	float MultipliedDeltaTime = DeltaTime * 60.0f;
 
 	if (IsOnGround()) {
-		AddVelocity((GetVelocityNoGravity() * friction) * MultipliedDeltaTime);
+		AddVelocity(-(GetVelocityNoGravity() * friction) * MultipliedDeltaTime);
 	}
 	else {
 		if (bFrictionInAir)
-			AddVelocity((GetVelocityNoGravity() * friction) * MultipliedDeltaTime);
+			AddVelocity(-(GetVelocityNoGravity() * friction) * MultipliedDeltaTime);
 	}
 	Move(velocity * MultipliedDeltaTime);
 }
