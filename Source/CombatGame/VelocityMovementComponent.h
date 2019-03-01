@@ -30,17 +30,26 @@ public:
 	UPROPERTY(EditAnywhere)
 		bool bFrictionInAir = false;
 
-	FHitResult GetGroundTrace();
-	bool IsOnGround();
+	UFUNCTION(BlueprintCallable)
+		FHitResult GetGroundTrace();
+	UFUNCTION(BlueprintCallable)
+		bool IsOnGround();
 
-	FVector GetVelocity();
-	FVector GetVelocityNoGravity();
-	void AddVelocity(FVector deltaVelocity);
-	void SetVelocity(FVector newVelocity);
+	UFUNCTION(BlueprintCallable)
+		FVector GetVelocity();
+	UFUNCTION(BlueprintCallable)
+		FVector GetVelocityNoGravity();
+	UFUNCTION(BlueprintCallable)
+		void AddVelocity(FVector deltaVelocity);
+	UFUNCTION(BlueprintCallable)
+		void SetVelocity(FVector newVelocity);
 
-	void Walk(FVector walkDirection, float DeltaTime);
+	UFUNCTION(BlueprintCallable)
+		void Walk(FVector walkDirection, float DeltaTime);
 
-	void Move(FVector deltaVector);
+	UFUNCTION(BlueprintCallable)
+		void Move(FVector deltaVector);
 
-	FVector GetOwnerLocation();
+	UFUNCTION(BlueprintCallable)
+		FVector GetOwnerLocation();
 };
