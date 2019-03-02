@@ -17,7 +17,7 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 		float groundDistance;
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	UPROPERTY(EditAnywhere)
 		float friction;
 	UPROPERTY(EditAnywhere)
 		float acceleration;

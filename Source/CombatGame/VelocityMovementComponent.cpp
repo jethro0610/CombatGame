@@ -7,16 +7,15 @@ UVelocityMovementComponent::UVelocityMovementComponent() {
 
 void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	float MultipliedDeltaTime = DeltaTime * 60.0f;
 
 	if (IsOnGround()) {
-		AddVelocity(-(GetVelocityNoGravity() * friction) * MultipliedDeltaTime);
+		AddVelocity(-(GetVelocityNoGravity() * friction) * DeltaTime);
 	}
 	else {
 		if (bFrictionInAir)
-			AddVelocity(-(GetVelocityNoGravity() * friction) * MultipliedDeltaTime);
+			AddVelocity(-(GetVelocityNoGravity() * friction) * DeltaTime);
 	}
-	Move(velocity * MultipliedDeltaTime);
+	Move(velocity * DeltaTime);
 }
 
 FHitResult UVelocityMovementComponent::GetGroundTrace() {
@@ -47,8 +46,7 @@ void UVelocityMovementComponent::SetVelocity(FVector newVelocity) {
 
 void UVelocityMovementComponent::Walk(FVector walkDirection, float DeltaTime) {
 	if (IsOnGround() || bCanWalkInAir) {
-		float MultipliedDeltaTime = DeltaTime * 60.0f;
-		AddVelocity(walkDirection * acceleration * MultipliedDeltaTime);
+		AddVelocity(walkDirection * acceleration * DeltaTime);
 	}
 }
 
