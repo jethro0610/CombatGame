@@ -18,9 +18,20 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	Move(velocity * DeltaSeconds);
 }
 
+void UVelocityMovementComponent::SetHalfHeight(float newHalfHeight) {
+	halfHeight = newHalfHeight;
+}
+
 FHitResult UVelocityMovementComponent::GetGroundTrace() {
 	FHitResult outputHit;
-	GetWorld()->LineTraceSingleByChannel(outputHit, GetOwnerLocation(), GetOwnerLocation() + (GetOwner()->GetActorUpVector() * -groundDistance), ECC_WorldDynamic);
+
+	FCollisionQueryParams traceParams;
+	traceParams.AddIgnoredActor(GetOwner());
+
+	FVector ownerUpVector = GetOwner()->GetActorUpVector();
+	FVector groundTraceEndPoint = GetOwnerLocation() + (ownerUpVector * -halfHeight) + (ownerUpVector * -groundDistance);
+
+	GetWorld()->LineTraceSingleByChannel(outputHit, GetOwnerLocation(), groundTraceEndPoint, ECC_WorldDynamic, traceParams);
 	return outputHit;
 }
 

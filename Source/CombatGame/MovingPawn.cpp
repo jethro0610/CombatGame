@@ -9,6 +9,7 @@ AMovingPawn::AMovingPawn()
 	RootComponent = collisionCapsule;
 
 	movementComponent = CreateDefaultSubobject<UVelocityMovementComponent>("Movement Component");
+	movementComponent->SetHalfHeight(collisionCapsule->GetScaledCapsuleHalfHeight());
 	movementComponent->SetUpdatedComponent(RootComponent);
 }
 

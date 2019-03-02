@@ -23,6 +23,7 @@ private:
 		float acceleration = 3000.0f;
 
 	FVector velocity;
+	float halfHeight;
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -30,6 +31,8 @@ public:
 	UPROPERTY(EditAnywhere)
 		bool bFrictionInAir = false;
 
+	UFUNCTION(BlueprintCallable)
+		void SetHalfHeight(float newHalfHeight);
 	UFUNCTION(BlueprintCallable)
 		FHitResult GetGroundTrace();
 	UFUNCTION(BlueprintCallable)
