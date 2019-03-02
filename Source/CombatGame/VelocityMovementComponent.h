@@ -62,7 +62,7 @@ public:
 		void SetGravity(float newGravity);
 
 	UFUNCTION(BlueprintCallable)
-		void Walk(FVector walkDirection);
+		void Walk(FVector walkDirection, float walkSpeed);
 
 	UFUNCTION(BlueprintCallable)
 		void Move(FVector deltaVector);

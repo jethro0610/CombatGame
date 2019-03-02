@@ -78,10 +78,11 @@ void UVelocityMovementComponent::SetGravity(float newGravity) {
 	velocity = FVector(velocity.X, velocity.Y, updatedGravity);
 }
 
-void UVelocityMovementComponent::Walk(FVector walkDirection) {
+void UVelocityMovementComponent::Walk(FVector walkDirection, float walkSpeed) {
 	float DeltaSeconds = GetWorld()->DeltaTimeSeconds;
+	FVector oneWalkDirection = walkDirection.GetClampedToMaxSize(1.0f);
 	if (IsOnGround() || bCanWalkInAir) {
-		AddVelocity(walkDirection * acceleration * DeltaSeconds);
+		AddVelocity(oneWalkDirection * walkSpeed * acceleration * DeltaSeconds);
 	}
 }
 
