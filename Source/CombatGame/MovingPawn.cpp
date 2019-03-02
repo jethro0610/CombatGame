@@ -5,6 +5,7 @@ AMovingPawn::AMovingPawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	collisionCapsule = CreateDefaultSubobject<UCapsuleComponent>("Collider");
+	collisionCapsule->SetCollisionProfileName("BlockAllDynamic");
 	RootComponent = collisionCapsule;
 
 	movementComponent = CreateDefaultSubobject<UVelocityMovementComponent>("Movement Component");
