@@ -10,10 +10,14 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	float DeltaSeconds = GetWorld()->DeltaTimeSeconds;
 	if (IsOnGround()) {
 		AddVelocity(-(GetVelocityNoGravity() * friction) * DeltaSeconds);
+		SetGravity(0.0f);
 	}
 	else {
 		if (bFrictionInAir)
 			AddVelocity(-(GetVelocityNoGravity() * friction) * DeltaSeconds);
+
+		if(bGravityEnabled)
+			AddGravity(gravitySpeed * DeltaSeconds);
 	}
 	Move(velocity * DeltaSeconds);
 }
@@ -53,6 +57,25 @@ void UVelocityMovementComponent::AddVelocity(FVector deltaVelocity) {
 
 void UVelocityMovementComponent::SetVelocity(FVector newVelocity) {
 	velocity = newVelocity;
+}
+void UVelocityMovementComponent::SetGravityEnabled(bool gravityEnabled) {
+	bGravityEnabled = gravityEnabled;
+}
+
+float UVelocityMovementComponent::GetGravity() {
+	return -velocity.Z;
+}
+
+void UVelocityMovementComponent::AddGravity(float deltaGravity) {
+	float updatedGravity = velocity.Z - deltaGravity;
+	updatedGravity = FMath::Max(-maxGravity, updatedGravity);
+	velocity = FVector(velocity.X, velocity.Y, updatedGravity);
+}
+
+void UVelocityMovementComponent::SetGravity(float newGravity) {
+	float updatedGravity = newGravity;
+	updatedGravity = FMath::Max(-maxGravity, updatedGravity);
+	velocity = FVector(velocity.X, velocity.Y, updatedGravity);
 }
 
 void UVelocityMovementComponent::Walk(FVector walkDirection) {

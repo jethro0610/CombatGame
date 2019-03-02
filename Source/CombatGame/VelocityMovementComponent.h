@@ -21,6 +21,10 @@ private:
 		float friction = 6.0f;
 	UPROPERTY(EditAnywhere)
 		float acceleration = 3000.0f;
+	UPROPERTY(EditAnywhere)
+		float gravitySpeed;
+	UPROPERTY(EditAnywhere)
+		float maxGravity;
 
 	FVector velocity;
 	float halfHeight;
@@ -30,6 +34,8 @@ public:
 		bool bCanWalkInAir = false;
 	UPROPERTY(EditAnywhere)
 		bool bFrictionInAir = false;
+	UPROPERTY(EditAnywhere)
+		bool bGravityEnabled = true;
 
 	UFUNCTION(BlueprintCallable)
 		void SetHalfHeight(float newHalfHeight);
@@ -46,6 +52,14 @@ public:
 		void AddVelocity(FVector deltaVelocity);
 	UFUNCTION(BlueprintCallable)
 		void SetVelocity(FVector newVelocity);
+	UFUNCTION(BlueprintCallable)
+		void SetGravityEnabled(bool gravityEnabled);
+	UFUNCTION(BlueprintCallable)
+		float GetGravity();
+	UFUNCTION(BlueprintCallable)
+		void AddGravity(float deltaGravity);
+	UFUNCTION(BlueprintCallable)
+		void SetGravity(float newGravity);
 
 	UFUNCTION(BlueprintCallable)
 		void Walk(FVector walkDirection);
