@@ -16,11 +16,11 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-		float groundDistance;
+		float groundDistance = 1.0f;
 	UPROPERTY(EditAnywhere)
-		float friction;
+		float friction = 6.0f;
 	UPROPERTY(EditAnywhere)
-		float acceleration;
+		float acceleration = 3000.0f;
 
 	FVector velocity;
 
