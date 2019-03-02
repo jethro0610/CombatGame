@@ -45,7 +45,7 @@ public:
 		void SetVelocity(FVector newVelocity);
 
 	UFUNCTION(BlueprintCallable)
-		void Walk(FVector walkDirection, float DeltaTime);
+		void Walk(FVector walkDirection);
 
 	UFUNCTION(BlueprintCallable)
 		void Move(FVector deltaVector);
