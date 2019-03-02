@@ -1,6 +1,6 @@
-#include "MovingPawn.h"
+#include "CombatPawn.h"
 
-AMovingPawn::AMovingPawn()
+ACombatPawn::ACombatPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -13,23 +13,23 @@ AMovingPawn::AMovingPawn()
 	movementComponent->SetUpdatedComponent(RootComponent);
 }
 
-void AMovingPawn::BeginPlay()
+void ACombatPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-void AMovingPawn::Tick(float DeltaTime)
+void ACombatPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-void AMovingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACombatPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-UVelocityMovementComponent* AMovingPawn::GetMovement() {
+UVelocityMovementComponent* ACombatPawn::GetMovement() {
 	return movementComponent;
 }

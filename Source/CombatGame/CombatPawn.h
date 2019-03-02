@@ -4,15 +4,15 @@
 #include "GameFramework/Pawn.h"
 #include "VelocityMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "MovingPawn.generated.h"
+#include "CombatPawn.generated.h"
 
 UCLASS()
-class COMBATGAME_API AMovingPawn : public APawn
+class COMBATGAME_API ACombatPawn : public APawn
 {
 	GENERATED_BODY()
 
 public:
-	AMovingPawn();
+	ACombatPawn();
 
 protected:
 	virtual void BeginPlay() override;
