@@ -47,7 +47,8 @@ private:
 	UPROPERTY(EditAnywhere)
 		float verticalKnockback;
 
-	void OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult);
+	UFUNCTION()
+		void OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult);
 
 public:
 	UPROPERTY(BlueprintAssignable)
