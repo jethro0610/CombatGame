@@ -10,7 +10,8 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	float DeltaSeconds = GetWorld()->DeltaTimeSeconds;
 	if (IsOnGround()) {
 		AddVelocity(-(GetVelocityNoGravity() * friction) * DeltaSeconds);
-		SetGravity(0.0f);
+		if (GetGravity() > 0.0f)
+			SetGravity(0.0f);
 	}
 	else {
 		if (bFrictionInAir)
