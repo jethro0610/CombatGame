@@ -27,6 +27,14 @@ void UCombatCollider::SetIntangible(bool isIntangible) {
 	bIntangible = isIntangible;
 }
 
+float UCombatCollider::GetHorizontalKnockback() {
+	return horizontalKnockback;
+}
+
+float UCombatCollider::GetVerticalKnockback() {
+	return verticalKnockback;
+}
+
 void UCombatCollider::OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult)
 {
 	if (otherActor!= nullptr && otherActor != GetOwner() && otherComp != this && otherComp != nullptr) {

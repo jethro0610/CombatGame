@@ -77,4 +77,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void SetIntangible(bool isIntangible);
+
+	UFUNCTION(BlueprintCallable)
+		float GetHorizontalKnockback();
+
+	UFUNCTION(BlueprintCallable)
+		float GetVerticalKnockback();
 };
