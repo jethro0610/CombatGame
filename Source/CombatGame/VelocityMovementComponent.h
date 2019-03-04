@@ -5,7 +5,7 @@
 #include "VelocityMovementComponent.generated.h"
 
 
-UCLASS()
+UCLASS(BlueprintType, meta = (BlueprintSpawnableComponent), DisplayName = "Velocity Movement Component")
 class COMBATGAME_API UVelocityMovementComponent : public UMovementComponent
 {
 	GENERATED_BODY()
