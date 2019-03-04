@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/CapsuleComponent.h"
-#include "CombatComponent.h"
 #include "CombatCollider.generated.h"
 
 UENUM(BlueprintType)
@@ -11,6 +10,8 @@ enum class ECombatColliderType : uint8 {
 	Hurt	UMETA(DisplayName = "Hurt"),
 	Guard	UMETA(DisplayName = "Guard")
 };
+
+class UCombatComponent;
 
 UCLASS(Blueprintable, meta=(BlueprintSpawnableComponent))
 class COMBATGAME_API UCombatCollider : public UCapsuleComponent

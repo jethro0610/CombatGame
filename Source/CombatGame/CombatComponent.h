@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "CombatCollider.h"
 #include "CombatComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLandAttackDelegate, UCombatCollider*, attackingCollider, UCombatCollider*, hitCollider, FHitResult, hitResult);
@@ -37,4 +38,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 		FAttackClankedDelegate OnAttackClanked;
+
+	UFUNCTION(BlueprintCallable)
+		FVector GetKnockbackVector(UCombatCollider* hitCollider, UCombatCollider* attackingCollider);
 };

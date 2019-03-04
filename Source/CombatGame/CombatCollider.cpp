@@ -1,4 +1,5 @@
 #include "CombatCollider.h"
+#include "CombatComponent.h"
 
 UCombatCollider::UCombatCollider() {
 	SetCollisionProfileName("OverlapAll");
