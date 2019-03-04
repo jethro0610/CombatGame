@@ -4,9 +4,11 @@ ACombatPawn::ACombatPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	collisionCapsule = CreateDefaultSubobject<UCapsuleComponent>("Collider");
+	collisionCapsule = CreateDefaultSubobject<UCapsuleComponent>("World Collider");
 	collisionCapsule->SetCollisionProfileName("BlockAllDynamic");
 	RootComponent = collisionCapsule;
+
+	combatComponent = CreateDefaultSubobject<UCombatComponent>("Combat Component");
 
 	movementComponent = CreateDefaultSubobject<UVelocityMovementComponent>("Movement Component");
 	movementComponent->SetHalfHeight(collisionCapsule->GetScaledCapsuleHalfHeight());
@@ -28,6 +30,10 @@ void ACombatPawn::Tick(float DeltaTime)
 void ACombatPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+UCombatComponent* ACombatPawn::GetCombatComponent() {
+	return combatComponent;
 }
 
 UVelocityMovementComponent* ACombatPawn::GetMovement() {

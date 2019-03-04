@@ -4,6 +4,7 @@
 #include "GameFramework/Pawn.h"
 #include "VelocityMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "CombatComponent.h"
 #include "CombatPawn.generated.h"
 
 UCLASS()
@@ -27,9 +28,15 @@ private:
 		UCapsuleComponent* collisionCapsule;
 
 	UPROPERTY(EditAnywhere)
+		UCombatComponent* combatComponent;
+
+	UPROPERTY(EditAnywhere)
 		UVelocityMovementComponent* movementComponent;
 
 public:
 	UFUNCTION(BlueprintCallable)
 		UVelocityMovementComponent* GetMovement();
+
+	UFUNCTION(BlueprintCallable)
+		UCombatComponent* GetCombatComponent();
 };
