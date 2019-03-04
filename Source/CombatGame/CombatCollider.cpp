@@ -9,6 +9,14 @@ UCombatCollider::UCombatCollider() {
 void UCombatCollider::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UCombatComponent* foundComponent = GetOwner()->FindComponentByClass<UCombatComponent>();
+	if (foundComponent != nullptr && foundComponent->IsValidLowLevel())
+		combatComponent = foundComponent;
+}
+
+bool UCombatCollider::HasCombatComponent() {
+	return (combatComponent != nullptr && combatComponent->IsValidLowLevel());
 }
 
 ECombatColliderType UCombatCollider::GetCombatColliderType() {
@@ -39,25 +47,25 @@ void UCombatCollider::OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor
 {
 	if (otherActor!= nullptr && otherActor != GetOwner() && otherComp != this && otherComp != nullptr) {
 		UCombatCollider* otherCombatCollider = Cast<UCombatCollider>(otherComp);
-		if (otherCombatCollider->IsValidLowLevel()) {
+		if (otherCombatCollider->IsValidLowLevel() && HasCombatComponent()) {
 			if (GetCombatColliderType() == ECombatColliderType::Attack && otherCombatCollider->GetCombatColliderType() == ECombatColliderType::Hurt && !otherCombatCollider->IsIntangible()) {
-				OnLandAttack.Broadcast(this, otherCombatCollider, sweepResult);
+				combatComponent->OnLandAttack.Broadcast(this, otherCombatCollider, sweepResult);
 			}
 
 			if (GetCombatColliderType() == ECombatColliderType::Hurt && otherCombatCollider->GetCombatColliderType() == ECombatColliderType::Attack && !IsIntangible()) {
-				OnHitByAttack.Broadcast(this, otherCombatCollider, sweepResult);
+				combatComponent->OnHitByAttack.Broadcast(this, otherCombatCollider, sweepResult);
 			}
 
 			if (GetCombatColliderType() == ECombatColliderType::Guard && otherCombatCollider->GetCombatColliderType() == ECombatColliderType::Attack) {
-				OnSuccesfulGuard.Broadcast(this, otherCombatCollider, sweepResult);
+				combatComponent->OnSuccesfulGuard.Broadcast(this, otherCombatCollider, sweepResult);
 			}
 
 			if (GetCombatColliderType() == ECombatColliderType::Attack && otherCombatCollider->GetCombatColliderType() == ECombatColliderType::Guard) {
-				OnAttackGuarded.Broadcast(this, otherCombatCollider, sweepResult);
+				combatComponent->OnAttackGuarded.Broadcast(this, otherCombatCollider, sweepResult);
 			}
 
 			if (GetCombatColliderType() == ECombatColliderType::Attack && otherCombatCollider->GetCombatColliderType() == ECombatColliderType::Attack) {
-				OnAttackClanked.Broadcast(this, otherCombatCollider, sweepResult);
+				combatComponent->OnAttackClanked.Broadcast(this, otherCombatCollider, sweepResult);
 			}
 		}
 	}

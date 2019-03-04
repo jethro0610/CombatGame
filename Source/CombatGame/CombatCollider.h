@@ -2,13 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/CapsuleComponent.h"
+#include "CombatComponent.h"
 #include "CombatCollider.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLandAttackDelegate, UCombatCollider*, attackingCollider, UCombatCollider*, hitCollider, FHitResult, hitResult);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHitByAttackDelegate, UCombatCollider*, hitCollider, UCombatCollider*, attackingCollider, FHitResult, hitResult);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FSuccesfulGuardDelegate, UCombatCollider*, guardingCollider, UCombatCollider*, attackingCollider, FHitResult, hitResult);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAttackGuardedDelegate, UCombatCollider*, attackingCollider, UCombatCollider*, guardingCollider, FHitResult, hitResult);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAttackClankedDelegate, UCombatCollider*, attackingCollider, UCombatCollider*, otherAttackingCollider, FHitResult, hitResult);
 
 UENUM(BlueprintType)
 enum class ECombatColliderType : uint8 {
@@ -29,6 +24,10 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UCombatComponent* combatComponent;
+
+	bool HasCombatComponent();
+
 	UPROPERTY(EditAnywhere)
 		FName attackGroup;
 
@@ -51,21 +50,6 @@ private:
 		void OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult);
 
 public:
-	UPROPERTY(BlueprintAssignable)
-		FLandAttackDelegate OnLandAttack;
-
-	UPROPERTY(BlueprintAssignable)
-		FHitByAttackDelegate OnHitByAttack;
-
-	UPROPERTY(BlueprintAssignable)
-		FSuccesfulGuardDelegate OnSuccesfulGuard;
-
-	UPROPERTY(BlueprintAssignable)
-		FAttackGuardedDelegate OnAttackGuarded;
-
-	UPROPERTY(BlueprintAssignable)
-		FAttackClankedDelegate OnAttackClanked;
-
 	UFUNCTION(BlueprintCallable)
 		ECombatColliderType GetCombatColliderType();
 
