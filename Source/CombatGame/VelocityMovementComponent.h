@@ -22,9 +22,9 @@ private:
 	UPROPERTY(EditAnywhere)
 		float acceleration = 3000.0f;
 	UPROPERTY(EditAnywhere)
-		float gravitySpeed;
+		float gravitySpeed = 1500.0f;
 	UPROPERTY(EditAnywhere)
-		float maxGravity;
+		float maxGravity = 10000.0f;
 
 	FVector velocity;
 	float halfHeight;
