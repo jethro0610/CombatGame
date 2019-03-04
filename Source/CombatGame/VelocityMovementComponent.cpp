@@ -74,7 +74,7 @@ void UVelocityMovementComponent::AddGravity(float deltaGravity) {
 }
 
 void UVelocityMovementComponent::SetGravity(float newGravity) {
-	float updatedGravity = newGravity;
+	float updatedGravity = -newGravity;
 	updatedGravity = FMath::Max(-maxGravity, updatedGravity);
 	velocity = FVector(velocity.X, velocity.Y, updatedGravity);
 }
