@@ -22,11 +22,13 @@ private:
 	UPROPERTY(EditAnywhere)
 		float acceleration = 3000.0f;
 	UPROPERTY(EditAnywhere)
-		float gravitySpeed = 1500.0f;
+		float gravitySpeed = 500.0f;
 	UPROPERTY(EditAnywhere)
 		float maxGravity = 10000.0f;
 	UPROPERTY(EditAnywhere)
-		float knockbackSpeed;
+		float knockbackSpeed = 12.0f;
+	UPROPERTY(EditAnywhere)
+		float extraKnockbackAirtime = 200.0f;
 
 	bool bInHitstun;
 	float currentHorizontalKnockback;

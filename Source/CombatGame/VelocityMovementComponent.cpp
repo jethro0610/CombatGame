@@ -30,7 +30,7 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 			AddGravity(gravitySpeed * DeltaSeconds);
 
 		if (bInHitstun) {
-			if(GetGravity() < 0.0f)
+			if (GetGravity() < -extraKnockbackAirtime)
 				AddGravity(-(GetGravity() * knockbackSpeed) * DeltaSeconds);
 
 			if(GetVelocityNoGravity().Size() > currentHorizontalKnockback)
