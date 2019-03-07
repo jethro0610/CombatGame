@@ -25,6 +25,8 @@ private:
 		float gravitySpeed = 1500.0f;
 	UPROPERTY(EditAnywhere)
 		float maxGravity = 10000.0f;
+	UPROPERTY(EditAnywhere)
+		float verticalResistance = 8.0f;
 
 	FVector velocity;
 	float halfHeight;

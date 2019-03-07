@@ -19,6 +19,9 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 		if(bGravityEnabled)
 			AddGravity(gravitySpeed * DeltaSeconds);
+
+		if (GetGravity() < 0.0f)
+			AddGravity(-(GetGravity() * verticalResistance) * DeltaSeconds);
 	}
 	Move(velocity * DeltaSeconds);
 }
