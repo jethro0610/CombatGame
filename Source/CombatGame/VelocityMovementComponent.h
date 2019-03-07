@@ -26,7 +26,10 @@ private:
 	UPROPERTY(EditAnywhere)
 		float maxGravity = 10000.0f;
 	UPROPERTY(EditAnywhere)
-		float verticalResistance = 8.0f;
+		float knockbackSpeed;
+
+	bool bInHitstun;
+	float currentHorizontalKnockback;
 
 	FVector velocity;
 	float halfHeight;
@@ -68,6 +71,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void Move(FVector deltaVector);
+
+	UFUNCTION(BlueprintCallable)
+		void ApplyKnockback(FVector knockbackVelocity);
 
 	UFUNCTION(BlueprintCallable)
 		FVector GetOwnerLocation();

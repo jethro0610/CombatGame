@@ -9,9 +9,18 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	float DeltaSeconds = GetWorld()->DeltaTimeSeconds;
 	if (IsOnGround()) {
-		AddVelocity(-(GetVelocityNoGravity() * friction) * DeltaSeconds);
+		if (!bInHitstun) {
+			AddVelocity(-(GetVelocityNoGravity() * friction) * DeltaSeconds);
+		}
+		else {
+			AddVelocity(-(GetVelocityNoGravity() * knockbackSpeed) * DeltaSeconds);
+			if (GetVelocityNoGravity().Size() <= 0.1f) {
+				bInHitstun = false;
+			}
+		}
 		if (GetGravity() > 0.0f)
 			SetGravity(0.0f);
+
 	}
 	else {
 		if (bFrictionInAir)
@@ -20,8 +29,13 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		if(bGravityEnabled)
 			AddGravity(gravitySpeed * DeltaSeconds);
 
-		if (GetGravity() < 0.0f)
-			AddGravity(-(GetGravity() * verticalResistance) * DeltaSeconds);
+		if (bInHitstun) {
+			if(GetGravity() < 0.0f)
+				AddGravity(-(GetGravity() * knockbackSpeed) * DeltaSeconds);
+
+			if(GetVelocityNoGravity().Size() > currentHorizontalKnockback)
+				AddVelocity(-(GetVelocityNoGravity() * knockbackSpeed) * DeltaSeconds);
+		}
 	}
 	Move(velocity * DeltaSeconds);
 }
@@ -96,6 +110,12 @@ void UVelocityMovementComponent::Move(FVector deltaVector) {
 	if (movementHit.IsValidBlockingHit()) {
 		SlideAlongSurface(deltaVector, 1.0f - movementHit.Time, movementHit.Normal, movementHit, false);
 	}
+}
+
+void UVelocityMovementComponent::ApplyKnockback(FVector knockbackVelocity) {
+	SetVelocity(knockbackVelocity * knockbackSpeed);
+	currentHorizontalKnockback = FVector(knockbackVelocity.X, knockbackVelocity.Y, 0.0f).Size();
+	bInHitstun = true;
 }
 
 FVector UVelocityMovementComponent::GetOwnerLocation() {
