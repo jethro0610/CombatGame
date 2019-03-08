@@ -51,6 +51,12 @@ private:
 		void OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult);
 
 public:
+	UFUNCTION(Blueprintcallable)
+		FName GetAttackGroup();
+
+	UFUNCTION(BlueprintCallable)
+		void SetAttackGroup(FName newGroup);
+
 	UFUNCTION(BlueprintCallable)
 		ECombatColliderType GetCombatColliderType();
 
@@ -61,6 +67,12 @@ public:
 		bool IsIntangible();
 
 	UFUNCTION(BlueprintCallable)
+		float GetDamage();
+
+	UFUNCTION(BlueprintCallable)
+		void SetDamage(float newDamage);
+
+	UFUNCTION(BlueprintCallable)
 		void SetIntangible(bool isIntangible);
 
 	UFUNCTION(BlueprintCallable)
@@ -68,4 +80,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		float GetVerticalKnockback();
+
+	UFUNCTION(BlueprintCallable)
+		void SetKnockback(float newHorizontalKnockback, float newVerticalKnockback);
 };

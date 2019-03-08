@@ -20,6 +20,14 @@ bool UCombatCollider::HasCombatComponent() {
 	return (combatComponent != nullptr && combatComponent->IsValidLowLevel());
 }
 
+FName UCombatCollider::GetAttackGroup() {
+	return attackGroup;
+}
+
+void UCombatCollider::SetAttackGroup(FName newGroup) {
+	attackGroup = newGroup;
+}
+
 ECombatColliderType UCombatCollider::GetCombatColliderType() {
 	return combatColliderType;
 }
@@ -36,12 +44,25 @@ void UCombatCollider::SetIntangible(bool isIntangible) {
 	bIntangible = isIntangible;
 }
 
+float UCombatCollider::GetDamage() {
+	return damage;
+}
+
+void UCombatCollider::SetDamage(float newDamage) {
+	damage = newDamage;
+}
+
 float UCombatCollider::GetHorizontalKnockback() {
 	return horizontalKnockback;
 }
 
 float UCombatCollider::GetVerticalKnockback() {
 	return verticalKnockback;
+}
+
+void UCombatCollider::SetKnockback(float newHorizontalKnockback, float newVerticalKnockback) {
+	horizontalKnockback = newHorizontalKnockback;
+	verticalKnockback = newVerticalKnockback;
 }
 
 void UCombatCollider::OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult)
