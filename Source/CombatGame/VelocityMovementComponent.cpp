@@ -5,6 +5,11 @@ UVelocityMovementComponent::UVelocityMovementComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UVelocityMovementComponent::BeginPlay()
+{
+	OnEnterGround.AddDynamic(this, &UVelocityMovementComponent::EnterGround);
+}
+
 void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	float DeltaSeconds = GetWorld()->DeltaTimeSeconds;
@@ -21,6 +26,10 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		if (GetGravity() > 0.0f)
 			SetGravity(0.0f);
 
+		if (bGroundedLastFrame == false) {
+			bGroundedLastFrame = true;
+			OnEnterGround.Broadcast();
+		}
 	}
 	else {
 		if (bFrictionInAir)
@@ -36,8 +45,16 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 			if(GetVelocityNoGravity().Size() > currentHorizontalKnockback)
 				AddVelocity(-(GetVelocityNoGravity() * knockbackSpeed) * DeltaSeconds);
 		}
+
+		if (bGroundedLastFrame == true) {
+			bGroundedLastFrame = false;
+		}
 	}
 	Move(velocity * DeltaSeconds);
+}
+
+void UVelocityMovementComponent::EnterGround() {
+
 }
 
 void UVelocityMovementComponent::SetHalfHeight(float newHalfHeight) {

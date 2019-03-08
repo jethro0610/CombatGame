@@ -4,6 +4,7 @@
 #include "GameFramework/MovementComponent.h"
 #include "VelocityMovementComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnterGroundDelegate);
 
 UCLASS(BlueprintType, meta = (BlueprintSpawnableComponent), DisplayName = "Velocity Movement Component")
 class COMBATGAME_API UVelocityMovementComponent : public UMovementComponent
@@ -13,6 +14,9 @@ class COMBATGAME_API UVelocityMovementComponent : public UMovementComponent
 public:
 	UVelocityMovementComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+protected:
+	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -33,10 +37,18 @@ private:
 	bool bInHitstun;
 	float currentHorizontalKnockback;
 
+	bool bGroundedLastFrame;
+
 	FVector velocity;
 	float halfHeight;
 
+	UFUNCTION()
+		void EnterGround();
+
 public:
+	UPROPERTY(BlueprintAssignable)
+		FEnterGroundDelegate OnEnterGround;
+
 	UPROPERTY(EditAnywhere)
 		bool bCanWalkInAir = false;
 	UPROPERTY(EditAnywhere)
