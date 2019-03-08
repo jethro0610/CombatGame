@@ -54,7 +54,8 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 }
 
 void UVelocityMovementComponent::EnterGround() {
-
+	if (bInHitstun)
+		SetVelocity(FVector::ZeroVector);
 }
 
 void UVelocityMovementComponent::SetHalfHeight(float newHalfHeight) {
