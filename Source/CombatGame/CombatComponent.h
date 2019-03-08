@@ -11,7 +11,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FSuccesfulGuardDelegate, UCombatC
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAttackGuardedDelegate, UCombatCollider*, attackingCollider, UCombatCollider*, guardingCollider, FHitResult, hitResult);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAttackClankedDelegate, UCombatCollider*, attackingCollider, UCombatCollider*, otherAttackingCollider, FHitResult, hitResult);
 
-
 UCLASS( BlueprintType, meta=(BlueprintSpawnableComponent), DisplayName = "Combat Component" )
 class COMBATGAME_API UCombatComponent : public UActorComponent
 {
@@ -41,4 +40,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		FVector GetKnockbackVector(UCombatCollider* hitCollider, UCombatCollider* attackingCollider);
+
+	UFUNCTION(BlueprintCallable)
+		void SpawnCombatCollider(FName socketName, FVector offset, float length, float width, FName attackGroup, ECombatColliderType type, bool isIntangible, float damage, float horizontalKnocback, float verticalKnockback);
 };
