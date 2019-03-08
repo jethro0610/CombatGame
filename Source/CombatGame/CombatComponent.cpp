@@ -18,7 +18,8 @@ FVector UCombatComponent::GetKnockbackVector(UCombatCollider* hitCollider, UComb
 }
 
 void UCombatComponent::SpawnCombatCollider(FName socketName, FVector offset, float length, float width, FName attackGroup, ECombatColliderType type, bool isIntangible, float damage, float horizontalKnocback, float verticalKnockback) {
-	UCombatCollider* spawnedCollider = NewObject<UCombatCollider>(UCombatCollider::StaticClass());
+	UCombatCollider* spawnedCollider = NewObject<UCombatCollider>(this, UCombatCollider::StaticClass());
+	spawnedCollider->RegisterComponent();
 	spawnedCollider->AttachTo(GetOwner()->GetRootComponent(), socketName);
 	spawnedCollider->AddLocalOffset(offset);
 
