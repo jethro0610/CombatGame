@@ -51,6 +51,15 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		}
 	}
 	Move(velocity * DeltaSeconds);
+	
+	if (bTickOffWalkingNextFrame) {
+		bTickOffWalkingNextFrame = false;
+		bIsWalking = false;
+	}
+
+	if (bIsWalking) {
+		bTickOffWalkingNextFrame = true;
+	}
 }
 
 void UVelocityMovementComponent::EnterGround() {
@@ -77,6 +86,10 @@ FHitResult UVelocityMovementComponent::GetGroundTrace() {
 
 bool UVelocityMovementComponent::IsOnGround() {
 	return GetGroundTrace().IsValidBlockingHit();
+}
+
+bool UVelocityMovementComponent::IsWalking() {
+	return bIsWalking;
 }
 
 FVector UVelocityMovementComponent::GetVelocity() {
@@ -120,6 +133,7 @@ void UVelocityMovementComponent::Walk(FVector walkDirection, float walkSpeed) {
 	if (IsOnGround() || bCanWalkInAir) {
 		AddVelocity(oneWalkDirection * walkSpeed * acceleration * DeltaSeconds);
 	}
+	bIsWalking = true;
 }
 
 void UVelocityMovementComponent::Move(FVector deltaVector) {

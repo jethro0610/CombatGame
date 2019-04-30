@@ -38,6 +38,8 @@ private:
 	float currentHorizontalKnockback;
 
 	bool bGroundedLastFrame;
+	bool bTickOffWalkingNextFrame;
+	bool bIsWalking;
 
 	FVector velocity;
 	float halfHeight;
@@ -62,6 +64,8 @@ public:
 		FHitResult GetGroundTrace();
 	UFUNCTION(BlueprintCallable)
 		bool IsOnGround();
+	UFUNCTION(BlueprintCallable)
+		bool IsWalking();
 
 	UFUNCTION(BlueprintCallable)
 		FVector GetVelocity();
