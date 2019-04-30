@@ -41,6 +41,9 @@ public:
 		FVector offset;
 
 	UPROPERTY(EditAnywhere)
+		FRotator rotation;
+
+	UPROPERTY(EditAnywhere)
 		float length;
 
 	UPROPERTY(EditAnywhere)

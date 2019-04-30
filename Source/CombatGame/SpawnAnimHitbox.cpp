@@ -14,7 +14,7 @@ USpawnAnimHitbox::USpawnAnimHitbox() {
 void USpawnAnimHitbox::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
 	ACombatPawn* owningPawn = Cast<ACombatPawn,AActor>(MeshComponent->GetOwner());
 	if(owningPawn->IsValidLowLevel())
-		spawnedCollider = owningPawn->GetCombatComponent()->SpawnCombatCollider(MeshComponent, socket, offset, length, width, type, isIntangible, attackGroup, damage, horizontalKnockback, verticalKnockback);
+		spawnedCollider = owningPawn->GetCombatComponent()->SpawnCombatCollider(MeshComponent, socket, offset, rotation, length, width, type, isIntangible, attackGroup, damage, horizontalKnockback, verticalKnockback);
 
 	Received_NotifyBegin(MeshComponent, AnimationSequence, TotalDuration);
 }
@@ -45,7 +45,8 @@ void USpawnAnimHitbox::Tick(float DeltaTime) {
 		if (currentTime >= notifyStartTime && currentTime <= notifyEndTime) {
 			FTransform socketTransform = currentMeshComponent->GetSocketTransform(socket);
 			FVector colliderPosition = socketTransform.TransformPosition(offset/socketTransform.GetScale3D());
-			DrawDebugCapsule(currentMeshComponent->GetWorld(), colliderPosition, length, width, socketTransform.Rotator().Quaternion(), FColor::Red);
+			FQuat colliderRotation = socketTransform.TransformRotation(rotation.Quaternion());
+			DrawDebugCapsule(currentMeshComponent->GetWorld(), colliderPosition, length, width, colliderRotation, FColor::Red);
 		}
 	}
 }
