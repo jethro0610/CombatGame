@@ -42,5 +42,5 @@ public:
 		FVector GetKnockbackVector(UCombatCollider* hitCollider, UCombatCollider* attackingCollider);
 
 	UFUNCTION(BlueprintCallable)
-		void SpawnCombatCollider(FName socketName, FVector offset, float length, float width, FName attackGroup, ECombatColliderType type, bool isIntangible, float damage, float horizontalKnocback, float verticalKnockback);
+		UCombatCollider* SpawnCombatCollider(USceneComponent* parentComponent, FName socket, FVector offset, float length, float width, ECombatColliderType type, bool isIntangible, FName attackGroup, float damage, float horizontalKnocback, float verticalKnockback);
 };
