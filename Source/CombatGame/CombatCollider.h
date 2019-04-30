@@ -23,6 +23,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	UCombatComponent* combatComponent;
@@ -30,13 +31,13 @@ private:
 	bool HasCombatComponent();
 
 	UPROPERTY(EditAnywhere)
-		FName attackGroup;
-
-	UPROPERTY(EditAnywhere)
 		ECombatColliderType combatColliderType;
 
 	UPROPERTY(EditAnywhere)
 		bool bIntangible;
+
+	UPROPERTY(EditAnywhere)
+		FName attackGroup;
 
 	UPROPERTY(EditAnywhere)
 		float damage;
@@ -51,12 +52,6 @@ private:
 		void OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult);
 
 public:
-	UFUNCTION(Blueprintcallable)
-		FName GetAttackGroup();
-
-	UFUNCTION(BlueprintCallable)
-		void SetAttackGroup(FName newGroup);
-
 	UFUNCTION(BlueprintCallable)
 		ECombatColliderType GetCombatColliderType();
 
@@ -65,6 +60,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		bool IsIntangible();
+
+	UFUNCTION(Blueprintcallable)
+		FName GetAttackGroup();
+
+	UFUNCTION(BlueprintCallable)
+		void SetAttackGroup(FName newGroup);
 
 	UFUNCTION(BlueprintCallable)
 		float GetDamage();
