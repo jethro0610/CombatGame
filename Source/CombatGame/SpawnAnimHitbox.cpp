@@ -39,14 +39,14 @@ void USpawnAnimHitbox::NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSeq
 }
 
 void USpawnAnimHitbox::Tick(float DeltaTime) {
-	if (currentMeshComponent->IsValidLowLevel() && currentAnimation->IsValidLowLevel()) {
+	if (currentMeshComponent->IsValidLowLevel() && currentAnimation->IsValidLowLevel() && spawnedCollider == nullptr) {
 		float currentTime = currentMeshComponent->GetAnimInstance()->Montage_GetPosition(currentAnimation);
 
 		if (currentTime >= notifyStartTime && currentTime <= notifyEndTime) {
 			FTransform socketTransform = currentMeshComponent->GetSocketTransform(socket);
 			FVector colliderPosition = socketTransform.TransformPosition(offset/socketTransform.GetScale3D());
 			FQuat colliderRotation = socketTransform.TransformRotation(rotation.Quaternion());
-			DrawDebugCapsule(currentMeshComponent->GetWorld(), colliderPosition, length, width, colliderRotation, FColor::Red);
+			DrawDebugCapsule(currentMeshComponent->GetWorld(), colliderPosition, length, width, colliderRotation, FColor::White);
 		}
 	}
 }
