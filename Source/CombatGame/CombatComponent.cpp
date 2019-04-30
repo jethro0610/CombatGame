@@ -19,7 +19,6 @@ FVector UCombatComponent::GetKnockbackVector(UCombatCollider* hitCollider, UComb
 
 UCombatCollider* UCombatComponent::SpawnCombatCollider(USceneComponent* parentComponent, FName socket, FVector offset, FRotator rotation, float length, float width, ECombatColliderType type, bool isIntangible, FName attackGroup, float damage, float horizontalKnocback, float verticalKnockback) {
 	UCombatCollider* spawnedCollider = NewObject<UCombatCollider>(this, UCombatCollider::StaticClass());
-	spawnedCollider->RegisterComponent();
 	spawnedCollider->AttachTo(parentComponent, socket);
 	spawnedCollider->SetAbsolute(false, false, true);
 	spawnedCollider->AddLocalOffset(offset/parentComponent->GetSocketTransform(socket).GetScale3D());
@@ -30,6 +29,7 @@ UCombatCollider* UCombatComponent::SpawnCombatCollider(USceneComponent* parentCo
 	spawnedCollider->SetAttackGroup(attackGroup);
 	spawnedCollider->SetDamage(damage);
 	spawnedCollider->SetKnockback(horizontalKnocback, verticalKnockback);
+	spawnedCollider->RegisterComponent();
 
 	return spawnedCollider;
 }
