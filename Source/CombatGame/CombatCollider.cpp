@@ -20,14 +20,6 @@ bool UCombatCollider::HasCombatComponent() {
 	return (combatComponent != nullptr && combatComponent->IsValidLowLevel());
 }
 
-FName UCombatCollider::GetAttackGroup() {
-	return attackGroup;
-}
-
-void UCombatCollider::SetAttackGroup(FName newGroup) {
-	attackGroup = newGroup;
-}
-
 ECombatColliderType UCombatCollider::GetCombatColliderType() {
 	return combatColliderType;
 }
@@ -42,6 +34,14 @@ bool UCombatCollider::IsIntangible() {
 
 void UCombatCollider::SetIntangible(bool isIntangible) {
 	bIntangible = isIntangible;
+}
+
+FName UCombatCollider::GetAttackGroup() {
+	return attackGroup;
+}
+
+void UCombatCollider::SetAttackGroup(FName newGroup) {
+	attackGroup = newGroup;
 }
 
 float UCombatCollider::GetDamage() {
