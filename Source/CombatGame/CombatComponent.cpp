@@ -10,26 +10,24 @@ void UCombatComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-FVector UCombatComponent::GetKnockbackVector(UCombatCollider* hitCollider, UCombatCollider* attackingCollider){
+FVector UCombatComponent::GetKnockbackVector(UHurtbox* hitCollider, UHitbox* attackingCollider){
 	FVector horizontalVector = hitCollider->GetOwner()->GetActorLocation() - attackingCollider->GetOwner()->GetActorLocation();
 	horizontalVector = horizontalVector.GetClampedToMaxSize(1.0f) * attackingCollider->GetHorizontalKnockback();
 	FVector verticalVector = FVector(0.0f, 0.0f, attackingCollider->GetVerticalKnockback());
 	return horizontalVector + verticalVector;
 }
 
-UCombatCollider* UCombatComponent::SpawnCombatCollider(USceneComponent* parentComponent, FName socket, FVector offset, FRotator rotation, float length, float width, ECombatColliderType type, bool isIntangible, FName attackGroup, float damage, float horizontalKnocback, float verticalKnockback) {
-	UCombatCollider* spawnedCollider = NewObject<UCombatCollider>(this, UCombatCollider::StaticClass());
-	spawnedCollider->AttachTo(parentComponent, socket);
-	spawnedCollider->SetAbsolute(false, false, true);
-	spawnedCollider->AddLocalOffset(offset/parentComponent->GetSocketTransform(socket).GetScale3D());
-	spawnedCollider->AddLocalRotation(rotation);
-	spawnedCollider->SetCapsuleSize(width, length, true);
-	spawnedCollider->SetCombatColliderType(type);
-	spawnedCollider->SetIntangible(isIntangible);
-	spawnedCollider->SetAttackGroup(attackGroup);
-	spawnedCollider->SetDamage(damage);
-	spawnedCollider->SetKnockback(horizontalKnocback, verticalKnockback);
-	spawnedCollider->RegisterComponent();
+UHitbox* UCombatComponent::SpawnHitbox(USceneComponent* parentComponent, FName socket, FVector offset, FRotator rotation, float length, float width, FName hitGroup, float damage, float horizontalKnocback, float verticalKnockback) {
+	UHitbox* spawnedHitbox = NewObject<UHitbox>(this, UHitbox::StaticClass());
+	spawnedHitbox->AttachTo(parentComponent, socket);
+	spawnedHitbox->SetAbsolute(false, false, true);
+	spawnedHitbox->AddLocalOffset(offset/parentComponent->GetSocketTransform(socket).GetScale3D());
+	spawnedHitbox->AddLocalRotation(rotation);
+	spawnedHitbox->SetCapsuleSize(width, length, true);
+	spawnedHitbox->SetHitGroup(hitGroup);
+	spawnedHitbox->SetDamage(damage);
+	spawnedHitbox->SetKnockback(horizontalKnocback, verticalKnockback);
+	spawnedHitbox->RegisterComponent();
 
-	return spawnedCollider;
+	return spawnedHitbox;
 }

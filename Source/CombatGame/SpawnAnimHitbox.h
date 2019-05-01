@@ -8,7 +8,7 @@
 #include "UObject/Object.h"
 #include "Tickable.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "CombatCollider.h"
+#include "Hitbox.h"
 #include "Components/CapsuleComponent.h"
 #include "SpawnAnimHitbox.generated.h"
 
@@ -50,13 +50,7 @@ public:
 		float width;
 
 	UPROPERTY(EditAnywhere)
-		ECombatColliderType type;
-
-	UPROPERTY(EditAnywhere)
-		bool isIntangible;
-
-	UPROPERTY(EditAnywhere)
-		FName attackGroup;
+		FName hitGroup;
 
 	UPROPERTY(EditAnywhere)
 		float damage;
@@ -72,5 +66,5 @@ private:
 	UAnimMontage* currentAnimation;
 	float notifyStartTime;
 	float notifyEndTime;
-	UCombatCollider* spawnedCollider;
+	UHitbox* spawnedHitbox;
 };

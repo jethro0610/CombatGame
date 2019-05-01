@@ -14,7 +14,7 @@ USpawnAnimHitbox::USpawnAnimHitbox() {
 void USpawnAnimHitbox::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
 	ACombatPawn* owningPawn = Cast<ACombatPawn,AActor>(MeshComponent->GetOwner());
 	if(owningPawn->IsValidLowLevel())
-		spawnedCollider = owningPawn->GetCombatComponent()->SpawnCombatCollider(MeshComponent, socket, offset, rotation, length, width, type, isIntangible, attackGroup, damage, horizontalKnockback, verticalKnockback);
+		spawnedHitbox = owningPawn->GetCombatComponent()->SpawnHitbox(MeshComponent, socket, offset, rotation, length, width, hitGroup, damage, horizontalKnockback, verticalKnockback);
 
 	Received_NotifyBegin(MeshComponent, AnimationSequence, TotalDuration);
 }
@@ -30,16 +30,16 @@ void USpawnAnimHitbox::NotifyTick(USkeletalMeshComponent* MeshComponent, UAnimSe
 }
 
 void USpawnAnimHitbox::NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence) {
-	if (spawnedCollider->IsValidLowLevel()) {
-		spawnedCollider->UnregisterComponent();
-		spawnedCollider->DestroyComponent();
-		spawnedCollider = nullptr;
+	if (spawnedHitbox->IsValidLowLevel()) {
+		spawnedHitbox->UnregisterComponent();
+		spawnedHitbox->DestroyComponent();
+		spawnedHitbox = nullptr;
 	}
 	Received_NotifyEnd(MeshComponent, AnimationSequence);
 }
 
 void USpawnAnimHitbox::Tick(float DeltaTime) {
-	if (currentMeshComponent->IsValidLowLevel() && currentAnimation->IsValidLowLevel() && spawnedCollider == nullptr) {
+	if (currentMeshComponent->IsValidLowLevel() && currentAnimation->IsValidLowLevel() && spawnedHitbox == nullptr) {
 		float currentTime = currentMeshComponent->GetAnimInstance()->Montage_GetPosition(currentAnimation);
 
 		if (currentTime >= notifyStartTime && currentTime <= notifyEndTime) {

@@ -2,41 +2,24 @@
 
 #include "CoreMinimal.h"
 #include "Components/CapsuleComponent.h"
-#include "CombatCollider.generated.h"
-
-UENUM(BlueprintType)
-enum class ECombatColliderType : uint8 {
-	Attack	UMETA(DisplayName = "Attack"),
-	Hurt	UMETA(DisplayName = "Hurt"),
-	Guard	UMETA(DisplayName = "Guard")
-};
+#include "Hitbox.generated.h"
 
 class UCombatComponent;
 
-UCLASS(Blueprintable, meta=(BlueprintSpawnableComponent))
-class COMBATGAME_API UCombatCollider : public UCapsuleComponent
+UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
+class COMBATGAME_API UHitbox : public UCapsuleComponent
 {
 	GENERATED_BODY()
-
+		
 public:
-	UCombatCollider();
+	UHitbox();
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	UCombatComponent* combatComponent;
-
-	bool HasCombatComponent();
-
 	UPROPERTY(EditAnywhere)
-		ECombatColliderType combatColliderType;
-
-	UPROPERTY(EditAnywhere)
-		bool bIntangible;
-
-	UPROPERTY(EditAnywhere)
-		FName attackGroup;
+		FName hitGroup;
 
 	UPROPERTY(EditAnywhere)
 		float damage;
@@ -47,33 +30,29 @@ private:
 	UPROPERTY(EditAnywhere)
 		float verticalKnockback;
 
+	UCombatComponent* combatComponent;
+
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult);
 
 public:
-	UFUNCTION(BlueprintCallable)
-		ECombatColliderType GetCombatColliderType();
-
-	UFUNCTION(BlueprintCallable)
-		void SetCombatColliderType(ECombatColliderType newType);
-
-	UFUNCTION(BlueprintCallable)
-		bool IsIntangible();
+	UFUNCTION(Blueprintcallable)
+		void UpdateCombatComponent();
 
 	UFUNCTION(Blueprintcallable)
-		FName GetAttackGroup();
+		bool HasCombatComponent();
+
+	UFUNCTION(Blueprintcallable)
+		FName GetHitGroup();
 
 	UFUNCTION(BlueprintCallable)
-		void SetAttackGroup(FName newGroup);
+		void SetHitGroup(FName newGroup);
 
 	UFUNCTION(BlueprintCallable)
 		float GetDamage();
 
 	UFUNCTION(BlueprintCallable)
 		void SetDamage(float newDamage);
-
-	UFUNCTION(BlueprintCallable)
-		void SetIntangible(bool isIntangible);
 
 	UFUNCTION(BlueprintCallable)
 		float GetHorizontalKnockback();
