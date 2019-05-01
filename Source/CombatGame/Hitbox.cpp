@@ -5,8 +5,6 @@
 UHitbox::UHitbox() {
 	OnComponentBeginOverlap.AddDynamic(this, &UHitbox::OnBeginOverlap);
 	SetCollisionProfileName("OverlapAll");
-	SetVisibility(true);
-	SetHiddenInGame(false);
 }
 
 void UHitbox::BeginPlay() {
