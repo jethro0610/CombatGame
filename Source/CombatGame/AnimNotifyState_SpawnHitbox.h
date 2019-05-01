@@ -1,27 +1,21 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Stats.h"
-#include "UObject/ObjectMacros.h"
-#include "UObject/Object.h"
-#include "Tickable.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "Hitbox.h"
 #include "Components/CapsuleComponent.h"
-#include "SpawnAnimHitbox.generated.h"
+#include "AnimNotifyState_SpawnHitbox.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class COMBATGAME_API USpawnAnimHitbox : public UAnimNotifyState, public FTickableGameObject
+UCLASS(meta = (DisplayName = "Spawn Hitbox"))
+class COMBATGAME_API UAnimNotifyState_SpawnHitbox : public UAnimNotifyState, public FTickableGameObject
 {
 	GENERATED_BODY()
 	
 public:
-	USpawnAnimHitbox();
+	UAnimNotifyState_SpawnHitbox();
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration);
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float FrameDeltaTime);
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence);

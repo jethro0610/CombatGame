@@ -1,17 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#include "SpawnAnimHitbox.h"
+#include "AnimNotifyState_SpawnHitbox.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Classes/Animation/AnimInstance.h"
 #include "Engine.h"
 #include "CombatPawn.h"
 #include "DrawDebugHelpers.h"
 
-USpawnAnimHitbox::USpawnAnimHitbox() {
+UAnimNotifyState_SpawnHitbox::UAnimNotifyState_SpawnHitbox() {
 
 }
 
-void USpawnAnimHitbox::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
+void UAnimNotifyState_SpawnHitbox::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
 	ACombatPawn* owningPawn = Cast<ACombatPawn,AActor>(MeshComponent->GetOwner());
 	if(owningPawn->IsValidLowLevel())
 		spawnedHitbox = owningPawn->GetCombatComponent()->SpawnHitbox(MeshComponent, socket, offset, rotation, length, width, hitGroup, damage, horizontalKnockback, verticalKnockback);
@@ -19,7 +17,7 @@ void USpawnAnimHitbox::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimS
 	Received_NotifyBegin(MeshComponent, AnimationSequence, TotalDuration);
 }
 
-void USpawnAnimHitbox::NotifyTick(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float FrameDeltaTime) {
+void UAnimNotifyState_SpawnHitbox::NotifyTick(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float FrameDeltaTime) {
 	currentMeshComponent = MeshComponent;
 	currentAnimation = Cast<UAnimMontage, UAnimSequenceBase>(AnimationSequence);
 
@@ -29,7 +27,7 @@ void USpawnAnimHitbox::NotifyTick(USkeletalMeshComponent* MeshComponent, UAnimSe
 	Received_NotifyTick(MeshComponent, AnimationSequence, FrameDeltaTime);
 }
 
-void USpawnAnimHitbox::NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence) {
+void UAnimNotifyState_SpawnHitbox::NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence) {
 	if (spawnedHitbox->IsValidLowLevel()) {
 		spawnedHitbox->UnregisterComponent();
 		spawnedHitbox->DestroyComponent();
@@ -38,7 +36,7 @@ void USpawnAnimHitbox::NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSeq
 	Received_NotifyEnd(MeshComponent, AnimationSequence);
 }
 
-void USpawnAnimHitbox::Tick(float DeltaTime) {
+void UAnimNotifyState_SpawnHitbox::Tick(float DeltaTime) {
 	if (currentMeshComponent->IsValidLowLevel() && currentAnimation->IsValidLowLevel() && spawnedHitbox == nullptr) {
 		float currentTime = currentMeshComponent->GetAnimInstance()->Montage_GetPosition(currentAnimation);
 
@@ -51,18 +49,18 @@ void USpawnAnimHitbox::Tick(float DeltaTime) {
 	}
 }
 
-bool USpawnAnimHitbox::IsTickable() const {
+bool UAnimNotifyState_SpawnHitbox::IsTickable() const {
 	return true;
 }
 
-TStatId USpawnAnimHitbox::GetStatId() const {
+TStatId UAnimNotifyState_SpawnHitbox::GetStatId() const {
 	return UObject::GetStatID();
 }
 
-bool USpawnAnimHitbox::IsTickableInEditor() const {
+bool UAnimNotifyState_SpawnHitbox::IsTickableInEditor() const {
 	return true;
 }
 
-bool USpawnAnimHitbox::IsTickableWhenPaused() const {
+bool UAnimNotifyState_SpawnHitbox::IsTickableWhenPaused() const {
 	return true;
 }
