@@ -1,4 +1,5 @@
 #include "CombatPawn.h"
+#include "Animation/AnimInstance.h"
 
 ACombatPawn::ACombatPawn()
 {
@@ -38,4 +39,80 @@ UCombatComponent* ACombatPawn::GetCombatComponent() {
 
 UVelocityMovementComponent* ACombatPawn::GetMovement() {
 	return movementComponent;
+}
+
+void ACombatPawn::PlayAnimMontage(UAnimMontage* animMontage) {
+	UActorComponent* foundComponent = GetComponentByClass(USkeletalMeshComponent::StaticClass());
+	USkeletalMeshComponent* meshComponent = Cast<USkeletalMeshComponent, UActorComponent>(foundComponent);
+	UAnimInstance* animInstance = meshComponent->GetAnimInstance();
+
+	if(animInstance->IsValidLowLevel())
+		animInstance->Montage_Play(animMontage);
+}
+
+UAnimMontage* ACombatPawn::GetCurrentMontage() {
+	UActorComponent* foundComponent = GetComponentByClass(USkeletalMeshComponent::StaticClass());
+	USkeletalMeshComponent* meshComponent = Cast<USkeletalMeshComponent, UActorComponent>(foundComponent);
+	UAnimInstance* animInstance = meshComponent->GetAnimInstance();
+
+	return animInstance->GetCurrentActiveMontage();
+}
+
+bool ACombatPawn::MontageIsAttack(UAnimMontage* inMontage) {
+	bool returnValue = false;
+	for (int i = 0; i < attacks.Num(); i++) {
+		if (attacks[i].attackComboOrder.Contains(inMontage)) {
+			returnValue = true;
+			break;
+		}
+	}
+	return returnValue;
+}
+
+bool ACombatPawn::IsAttacking() {
+	if (GetCurrentMontage()->IsValidLowLevel()) {
+		if (MontageIsAttack(GetCurrentMontage())) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
+}
+ 
+int ACombatPawn::GetAttackIndexFromName(FName attackName) {
+	int returnAttack = -1;
+	for (int i = 0; i < attacks.Num(); i++) {
+		if (attacks[i].attackName == attackName) {
+			returnAttack = i;
+			break;
+		}
+	}
+	return returnAttack;
+}
+
+void ACombatPawn::DoAttack(FName attackName) {
+	FAttack attack = attacks[GetAttackIndexFromName(attackName)];
+	if (!IsAttacking()) {
+		PlayAnimMontage(attack.attackComboOrder[0]);
+		OnAttack.Broadcast();
+	}
+	else if(canCombo && currentComboLength <= attack.attackComboOrder.Num() - 1){
+		canCombo = false;
+		PlayAnimMontage(attack.attackComboOrder[currentComboLength]);
+		OnAttack.Broadcast();
+	}
+}
+
+void ACombatPawn::EnableCombo() {
+	canCombo = true;
+	currentComboLength += 1;
+}
+
+void ACombatPawn::ResetCombo() {
+	canCombo = false;
+	currentComboLength = 0;
 }
