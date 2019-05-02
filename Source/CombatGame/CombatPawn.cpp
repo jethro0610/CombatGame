@@ -9,6 +9,9 @@ ACombatPawn::ACombatPawn()
 	collisionCapsule->SetCollisionProfileName("BlockAllDynamic");
 	RootComponent = collisionCapsule;
 
+	skeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh");
+	skeletalMesh->AttachTo(RootComponent);
+
 	combatComponent = CreateDefaultSubobject<UCombatComponent>("Combat Component");
 
 	movementComponent = CreateDefaultSubobject<UVelocityMovementComponent>("Movement Component");
@@ -42,18 +45,14 @@ UVelocityMovementComponent* ACombatPawn::GetMovement() {
 }
 
 void ACombatPawn::PlayAnimMontage(UAnimMontage* animMontage) {
-	UActorComponent* foundComponent = GetComponentByClass(USkeletalMeshComponent::StaticClass());
-	USkeletalMeshComponent* meshComponent = Cast<USkeletalMeshComponent, UActorComponent>(foundComponent);
-	UAnimInstance* animInstance = meshComponent->GetAnimInstance();
+	UAnimInstance* animInstance = skeletalMesh->GetAnimInstance();
 
 	if(animInstance->IsValidLowLevel())
 		animInstance->Montage_Play(animMontage);
 }
 
 UAnimMontage* ACombatPawn::GetCurrentMontage() {
-	UActorComponent* foundComponent = GetComponentByClass(USkeletalMeshComponent::StaticClass());
-	USkeletalMeshComponent* meshComponent = Cast<USkeletalMeshComponent, UActorComponent>(foundComponent);
-	UAnimInstance* animInstance = meshComponent->GetAnimInstance();
+	UAnimInstance* animInstance = skeletalMesh->GetAnimInstance();
 
 	return animInstance->GetCurrentActiveMontage();
 }

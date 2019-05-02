@@ -46,6 +46,9 @@ private:
 		UCapsuleComponent* collisionCapsule;
 
 	UPROPERTY(VisibleAnywhere)
+		USkeletalMeshComponent* skeletalMesh;
+
+	UPROPERTY(VisibleAnywhere)
 		UCombatComponent* combatComponent;
 
 	UPROPERTY(VisibleAnywhere)
