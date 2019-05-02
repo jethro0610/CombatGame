@@ -1,5 +1,6 @@
 #include "VelocityMovementComponent.h"
 #include "Engine.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UVelocityMovementComponent::UVelocityMovementComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -59,6 +60,14 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 	if (bIsWalking) {
 		bTickOffWalkingNextFrame = true;
+	}
+
+	UActorComponent* foundComponent = GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass());
+	USkeletalMeshComponent* meshComponent = Cast<USkeletalMeshComponent, UActorComponent>(foundComponent);
+	
+	if (meshComponent->IsValidLowLevel()) {
+		FTransform rootTransform = meshComponent->ConsumeRootMotion().GetRootMotionTransform();
+		Move(meshComponent->GetComponentRotation().RotateVector(rootTransform.GetLocation()));
 	}
 }
 
