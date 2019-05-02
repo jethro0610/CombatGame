@@ -62,12 +62,14 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		bTickOffWalkingNextFrame = true;
 	}
 
-	UActorComponent* foundComponent = GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass());
-	USkeletalMeshComponent* meshComponent = Cast<USkeletalMeshComponent, UActorComponent>(foundComponent);
-	
-	if (meshComponent->IsValidLowLevel()) {
-		FTransform rootTransform = meshComponent->ConsumeRootMotion().GetRootMotionTransform();
-		Move(meshComponent->GetComponentRotation().RotateVector(rootTransform.GetLocation()));
+	if (bApplyRootMotion) {
+		UActorComponent* foundComponent = GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass());
+		USkeletalMeshComponent* meshComponent = Cast<USkeletalMeshComponent, UActorComponent>(foundComponent);
+
+		if (meshComponent->IsValidLowLevel()) {
+			FTransform rootTransform = meshComponent->ConsumeRootMotion().GetRootMotionTransform();
+			Move(meshComponent->GetComponentRotation().RotateVector(rootTransform.GetLocation()));
+		}
 	}
 }
 
