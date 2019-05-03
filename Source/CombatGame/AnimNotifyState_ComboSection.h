@@ -23,7 +23,7 @@ public:
 private:
 	bool isInitialTick;
 	bool hasAttacked;
-	ACombatPawn* owningPawn;
+	TWeakObjectPtr<ACombatPawn> owningPawn;
 
 private:
 	UFUNCTION()

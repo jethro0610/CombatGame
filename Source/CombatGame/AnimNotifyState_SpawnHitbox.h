@@ -57,10 +57,10 @@ public:
 		float verticalKnockback;
 
 private:
-	USkeletalMeshComponent* currentMeshComponent;
-	UAnimMontage* currentAnimation;
+	TWeakObjectPtr<USkeletalMeshComponent> currentMeshComponent;
+	TWeakObjectPtr<UAnimMontage> currentAnimation;
 	float notifyStartTime;
 	float notifyEndTime;
-	UHitbox* spawnedHitbox;
-	ACombatPawn* owningPawn;
+	TWeakObjectPtr<UHitbox> spawnedHitbox;
+	TWeakObjectPtr<ACombatPawn> owningPawn;
 };

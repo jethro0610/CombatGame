@@ -17,7 +17,7 @@ void UHurtbox::OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* other
 	if (otherActor != nullptr && otherActor != GetOwner() && otherComp != this && otherComp != nullptr) {
 		if (HasCombatComponent()) {
 			UHitbox* connectingHitbox = Cast<UHitbox, UPrimitiveComponent>(otherComp);
-			if (connectingHitbox->IsValidLowLevel()) {
+			if (connectingHitbox != nullptr) {
 				combatComponent->OnHitByAttack.Broadcast(this, connectingHitbox, sweepResult);
 			}
 		}
@@ -34,10 +34,10 @@ bool UHurtbox::IsInvincible() {
 
 void UHurtbox::UpdateCombatComponent() {
 	UCombatComponent* foundComponent = GetOwner()->FindComponentByClass<UCombatComponent>();
-	if (foundComponent != nullptr && foundComponent->IsValidLowLevel())
+	if (foundComponent != nullptr)
 		combatComponent = foundComponent;
 }
 
 bool UHurtbox::HasCombatComponent() {
-	return (combatComponent != nullptr && combatComponent->IsValidLowLevel());
+	return (combatComponent != nullptr);
 }

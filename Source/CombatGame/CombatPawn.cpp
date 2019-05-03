@@ -29,7 +29,7 @@ void ACombatPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bApplyRootMotion && movementComponent->IsValidLowLevel() && skeletalMesh->IsValidLowLevel()) {
+	if (bApplyRootMotion && movementComponent != nullptr && skeletalMesh != nullptr) {
 		FTransform rootTransform = skeletalMesh->ConsumeRootMotion().GetRootMotionTransform();
 		movementComponent->Move(skeletalMesh->GetComponentRotation().RotateVector(rootTransform.GetLocation()));
 	}
@@ -49,16 +49,11 @@ UVelocityMovementComponent* ACombatPawn::GetMovement() {
 }
 
 void ACombatPawn::PlayAnimMontage(UAnimMontage* animMontage) {
-	UAnimInstance* animInstance = skeletalMesh->GetAnimInstance();
-
-	if(animInstance->IsValidLowLevel())
-		animInstance->Montage_Play(animMontage);
+	skeletalMesh->GetAnimInstance()->Montage_Play(animMontage);
 }
 
 UAnimMontage* ACombatPawn::GetCurrentMontage() {
-	UAnimInstance* animInstance = skeletalMesh->GetAnimInstance();
-
-	return animInstance->GetCurrentActiveMontage();
+	return skeletalMesh->GetAnimInstance()->GetCurrentActiveMontage();
 }
 
 bool ACombatPawn::MontageIsAttack(UAnimMontage* inMontage) {
@@ -73,7 +68,7 @@ bool ACombatPawn::MontageIsAttack(UAnimMontage* inMontage) {
 }
 
 bool ACombatPawn::IsAttacking() {
-	if (GetCurrentMontage()->IsValidLowLevel()) {
+	if (GetCurrentMontage() != nullptr) {
 		if (MontageIsAttack(GetCurrentMontage())) {
 			return true;
 		}

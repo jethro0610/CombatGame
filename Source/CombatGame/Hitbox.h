@@ -30,7 +30,7 @@ private:
 	UPROPERTY(EditAnywhere)
 		float verticalKnockback;
 
-	UCombatComponent* combatComponent;
+	TWeakObjectPtr<UCombatComponent> combatComponent;
 
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult);

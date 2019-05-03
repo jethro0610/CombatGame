@@ -9,10 +9,10 @@ UAnimNotifyState_SpawnHitbox::UAnimNotifyState_SpawnHitbox() {
 }
 
 void UAnimNotifyState_SpawnHitbox::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
-	if (!owningPawn->IsValidLowLevel())
+	if (owningPawn == nullptr)
 		owningPawn = Cast<ACombatPawn,AActor>(MeshComponent->GetOwner());
 
-	if(owningPawn->IsValidLowLevel())
+	if(owningPawn != nullptr)
 		spawnedHitbox = owningPawn->GetCombatComponent()->SpawnHitbox(MeshComponent, socket, offset, rotation, length, width, hitGroup, damage, horizontalKnockback, verticalKnockback);
 
 	Received_NotifyBegin(MeshComponent, AnimationSequence, TotalDuration);
@@ -38,8 +38,8 @@ void UAnimNotifyState_SpawnHitbox::NotifyEnd(USkeletalMeshComponent* MeshCompone
 }
 
 void UAnimNotifyState_SpawnHitbox::Tick(float DeltaTime) {
-	if (currentMeshComponent->IsValidLowLevel() && currentAnimation->IsValidLowLevel()) {
-		float currentTime = currentMeshComponent->GetAnimInstance()->Montage_GetPosition(currentAnimation);
+	if (currentMeshComponent != nullptr && currentAnimation != nullptr) {
+		float currentTime = currentMeshComponent->GetAnimInstance()->Montage_GetPosition(currentAnimation.Get());
 
 		if (currentTime >= notifyStartTime && currentTime <= notifyEndTime) {
 			FTransform socketTransform = currentMeshComponent->GetSocketTransform(socket);
