@@ -22,7 +22,7 @@ ACombatPawn::ACombatPawn()
 void ACombatPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	combatComponent->OnHitByAttack.AddDynamic(this, &ACombatPawn::HitByAttack);
 }
 
 void ACombatPawn::Tick(float DeltaTime)
@@ -38,6 +38,11 @@ void ACombatPawn::Tick(float DeltaTime)
 void ACombatPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void ACombatPawn::HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult) {
+	if (bRecieveKnockback)
+		movementComponent->ApplyKnockback(combatComponent->GetKnockbackVector(hitCollider, attackingCollider));
 }
 
 UCombatComponent* ACombatPawn::GetCombatComponent() {

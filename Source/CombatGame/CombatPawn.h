@@ -40,6 +40,10 @@ public:
 public:
 	UPROPERTY(EditAnywhere)
 		bool bApplyRootMotion = true;
+
+	UPROPERTY(EditAnywhere)
+		bool bRecieveKnockback = true;
+
 	UPROPERTY(BlueprintAssignable)
 		FAttackDelegate OnAttack;
 
@@ -61,6 +65,9 @@ private:
 
 	int currentComboLength;
 	bool canCombo;
+
+	UFUNCTION()
+		void HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult);
 
 public:
 	UFUNCTION(BlueprintCallable)
