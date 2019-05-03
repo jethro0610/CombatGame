@@ -2,7 +2,6 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Classes/Animation/AnimInstance.h"
 #include "Engine.h"
-#include "CombatPawn.h"
 #include "DrawDebugHelpers.h"
 
 UAnimNotifyState_SpawnHitbox::UAnimNotifyState_SpawnHitbox() {
@@ -10,7 +9,9 @@ UAnimNotifyState_SpawnHitbox::UAnimNotifyState_SpawnHitbox() {
 }
 
 void UAnimNotifyState_SpawnHitbox::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
-	ACombatPawn* owningPawn = Cast<ACombatPawn,AActor>(MeshComponent->GetOwner());
+	if (!owningPawn->IsValidLowLevel())
+		owningPawn = Cast<ACombatPawn,AActor>(MeshComponent->GetOwner());
+
 	if(owningPawn->IsValidLowLevel())
 		spawnedHitbox = owningPawn->GetCombatComponent()->SpawnHitbox(MeshComponent, socket, offset, rotation, length, width, hitGroup, damage, horizontalKnockback, verticalKnockback);
 

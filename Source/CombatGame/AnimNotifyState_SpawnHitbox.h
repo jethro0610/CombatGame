@@ -4,6 +4,7 @@
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "Hitbox.h"
 #include "Components/CapsuleComponent.h"
+#include "CombatPawn.h"
 #include "AnimNotifyState_SpawnHitbox.generated.h"
 
 /**
@@ -61,4 +62,5 @@ private:
 	float notifyStartTime;
 	float notifyEndTime;
 	UHitbox* spawnedHitbox;
+	ACombatPawn* owningPawn;
 };

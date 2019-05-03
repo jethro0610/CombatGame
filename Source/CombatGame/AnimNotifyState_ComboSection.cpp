@@ -1,8 +1,8 @@
 #include "AnimNotifyState_ComboSection.h"
-#include "CombatPawn.h"
 
 void UAnimNotifyState_ComboSection::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
-	ACombatPawn* owningPawn = Cast<ACombatPawn, AActor>(MeshComponent->GetOwner());
+	if(!owningPawn->IsValidLowLevel())
+		owningPawn = Cast<ACombatPawn, AActor>(MeshComponent->GetOwner());
 	
 	if (owningPawn->IsValidLowLevel()) {
 		owningPawn->OnAttack.RemoveDynamic(this, &UAnimNotifyState_ComboSection::OnPawnAttack);
@@ -24,8 +24,6 @@ void UAnimNotifyState_ComboSection::NotifyTick(USkeletalMeshComponent* MeshCompo
 }
 
 void UAnimNotifyState_ComboSection::NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence) {
-	ACombatPawn* owningPawn = Cast<ACombatPawn, AActor>(MeshComponent->GetOwner());
-
 	if (owningPawn->IsValidLowLevel()) {
 		if(!hasAttacked)
 			owningPawn->ResetCombo();

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
+#include "CombatPawn.h"
 #include "AnimNotifyState_ComboSection.generated.h"
 
 /**
@@ -22,6 +23,7 @@ public:
 private:
 	bool isInitialTick;
 	bool hasAttacked;
+	ACombatPawn* owningPawn;
 
 private:
 	UFUNCTION()
