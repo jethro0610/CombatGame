@@ -38,7 +38,7 @@ void UAnimNotifyState_SpawnHitbox::NotifyEnd(USkeletalMeshComponent* MeshCompone
 }
 
 void UAnimNotifyState_SpawnHitbox::Tick(float DeltaTime) {
-	if (currentMeshComponent != nullptr && currentAnimation != nullptr) {
+	if (currentMeshComponent != nullptr && currentAnimation != nullptr && GIsEditor && !currentMeshComponent->GetWorld()->HasBegunPlay()) {
 		float currentTime = currentMeshComponent->GetAnimInstance()->Montage_GetPosition(currentAnimation.Get());
 
 		if (currentTime >= notifyStartTime && currentTime <= notifyEndTime) {
