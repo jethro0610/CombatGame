@@ -38,6 +38,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
+	UPROPERTY(EditAnywhere)
+		bool bApplyRootMotion = true;
 	UPROPERTY(BlueprintAssignable)
 		FAttackDelegate OnAttack;
 

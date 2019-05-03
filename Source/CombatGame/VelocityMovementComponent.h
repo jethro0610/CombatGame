@@ -34,9 +34,6 @@ private:
 	UPROPERTY(EditAnywhere)
 		float extraKnockbackAirtime = 200.0f;
 
-	UPROPERTY(EditAnywhere)
-		bool bApplyRootMotion = true;
-
 	bool bInHitstun;
 	float currentHorizontalKnockback;
 

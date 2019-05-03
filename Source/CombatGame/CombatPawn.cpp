@@ -29,6 +29,10 @@ void ACombatPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bApplyRootMotion && movementComponent->IsValidLowLevel() && skeletalMesh->IsValidLowLevel()) {
+		FTransform rootTransform = skeletalMesh->ConsumeRootMotion().GetRootMotionTransform();
+		movementComponent->Move(skeletalMesh->GetComponentRotation().RotateVector(rootTransform.GetLocation()));
+	}
 }
 
 void ACombatPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

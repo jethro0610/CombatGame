@@ -8,6 +8,7 @@ UVelocityMovementComponent::UVelocityMovementComponent() {
 
 void UVelocityMovementComponent::BeginPlay()
 {
+	Super::BeginPlay();
 	OnEnterGround.AddDynamic(this, &UVelocityMovementComponent::EnterGround);
 }
 
@@ -60,16 +61,6 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 	if (bIsWalking) {
 		bTickOffWalkingNextFrame = true;
-	}
-
-	if (bApplyRootMotion) {
-		UActorComponent* foundComponent = GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass());
-		USkeletalMeshComponent* meshComponent = Cast<USkeletalMeshComponent, UActorComponent>(foundComponent);
-
-		if (meshComponent->IsValidLowLevel()) {
-			FTransform rootTransform = meshComponent->ConsumeRootMotion().GetRootMotionTransform();
-			Move(meshComponent->GetComponentRotation().RotateVector(rootTransform.GetLocation()));
-		}
 	}
 }
 
