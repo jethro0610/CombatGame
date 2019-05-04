@@ -30,6 +30,10 @@ private:
 	UPROPERTY(EditAnywhere)
 		float maxGravity = 10000.0f;
 	UPROPERTY(EditAnywhere)
+		float jumpHeight = 100.0f;
+	UPROPERTY(EditAnywhere)
+		float jumpSpeed = 6.0f;
+	UPROPERTY(EditAnywhere)
 		float knockbackSpeed = 12.0f;
 	UPROPERTY(EditAnywhere)
 		float extraKnockbackAirtime = 200.0f;
@@ -40,6 +44,8 @@ private:
 	bool bGroundedLastFrame;
 	bool bTickOffWalkingNextFrame;
 	bool bIsWalking;
+
+	bool bIsJumping;
 
 	FVector velocity;
 	float halfHeight;
@@ -66,6 +72,8 @@ public:
 		bool IsOnGround();
 	UFUNCTION(BlueprintCallable)
 		bool IsWalking();
+	UFUNCTION(BlueprintCallable)
+		bool IsJumping();
 
 	UFUNCTION(BlueprintCallable)
 		FVector GetVelocity();
@@ -89,6 +97,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void Move(FVector deltaVector);
+
+	UFUNCTION(BlueprintCallable)
+		void Jump();
 
 	UFUNCTION(BlueprintCallable)
 		void ApplyKnockback(FVector knockbackVelocity);

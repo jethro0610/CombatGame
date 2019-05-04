@@ -48,7 +48,16 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 				AddVelocity(-(GetVelocityNoGravity() * knockbackSpeed) * DeltaSeconds);
 		}
 
-		if (bGroundedLastFrame == true) {
+		if (bIsJumping) {
+			if (GetGravity() < 0.0f) {
+				AddGravity(-(GetGravity() * jumpSpeed) * DeltaSeconds);
+			}
+			else {
+				bIsJumping = false;
+			}
+		}
+
+		if (bGroundedLastFrame) {
 			bGroundedLastFrame = false;
 		}
 	}
@@ -92,6 +101,10 @@ bool UVelocityMovementComponent::IsOnGround() {
 
 bool UVelocityMovementComponent::IsWalking() {
 	return bIsWalking;
+}
+
+bool UVelocityMovementComponent::IsJumping() {
+	return bIsJumping;
 }
 
 FVector UVelocityMovementComponent::GetVelocity() {
@@ -143,6 +156,13 @@ void UVelocityMovementComponent::Move(FVector deltaVector) {
 	SafeMoveUpdatedComponent(deltaVector, UpdatedComponent->GetComponentRotation(), true, movementHit);
 	if (movementHit.IsValidBlockingHit()) {
 		SlideAlongSurface(deltaVector, 1.0f - movementHit.Time, movementHit.Normal, movementHit, false);
+	}
+}
+
+void UVelocityMovementComponent::Jump() {
+	if (IsOnGround()) {
+		SetGravity(-jumpHeight * jumpSpeed);
+		bIsJumping = true;
 	}
 }
 
