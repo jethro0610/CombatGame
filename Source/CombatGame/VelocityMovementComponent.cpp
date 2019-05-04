@@ -28,7 +28,7 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		if (GetGravity() > 0.0f)
 			SetGravity(0.0f);
 
-		if (bGroundedLastFrame == false) {
+		if (!bGroundedLastFrame) {
 			bGroundedLastFrame = true;
 			OnEnterGround.Broadcast();
 		}
@@ -59,6 +59,7 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 		if (bGroundedLastFrame) {
 			bGroundedLastFrame = false;
+			OnLeaveGround.Broadcast();
 		}
 	}
 	Move(velocity * DeltaSeconds);

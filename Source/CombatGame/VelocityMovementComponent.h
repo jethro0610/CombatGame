@@ -5,7 +5,7 @@
 #include "VelocityMovementComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnterGroundDelegate);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeaveGroundDelegate);
 UCLASS(BlueprintType, meta = (BlueprintSpawnableComponent), DisplayName = "Velocity Movement Component")
 class COMBATGAME_API UVelocityMovementComponent : public UMovementComponent
 {
@@ -56,6 +56,9 @@ private:
 public:
 	UPROPERTY(BlueprintAssignable)
 		FEnterGroundDelegate OnEnterGround;
+
+	UPROPERTY(BlueprintAssignable)
+		FLeaveGroundDelegate OnLeaveGround;
 
 	UPROPERTY(EditAnywhere)
 		bool bCanWalkInAir = false;
