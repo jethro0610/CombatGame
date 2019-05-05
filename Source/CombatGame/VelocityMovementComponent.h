@@ -30,7 +30,7 @@ private:
 	UPROPERTY(EditAnywhere)
 		float maxGravity = 10000.0f;
 	UPROPERTY(EditAnywhere)
-		float jumpHeight = 100.0f;
+		float jumpHeight = 400.0f;
 	UPROPERTY(EditAnywhere)
 		float jumpSpeed = 6.0f;
 	UPROPERTY(EditAnywhere)

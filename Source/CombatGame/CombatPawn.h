@@ -8,17 +8,6 @@
 #include "Animation/AnimMontage.h"
 #include "CombatPawn.generated.h"
 
-USTRUCT()
-struct FAttack {
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-		FName attackName;
-
-	UPROPERTY(EditAnywhere)
-		TArray<UAnimMontage*> attackComboOrder;
-};
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttackDelegate);
 
 UCLASS()
@@ -38,16 +27,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	UPROPERTY(EditAnywhere)
-		bool bApplyRootMotion = true;
-
-	UPROPERTY(EditAnywhere)
-		bool bRecieveKnockback = true;
-
 	UPROPERTY(BlueprintAssignable)
 		FAttackDelegate OnAttack;
 
-private:
+protected:
 	UPROPERTY(VisibleAnywhere)
 		UCapsuleComponent* collisionCapsule;
 
@@ -61,13 +44,16 @@ private:
 		UVelocityMovementComponent* movementComponent;
 
 	UPROPERTY(EditAnywhere)
-		TArray<FAttack> attacks;
+		bool bApplyRootMotion = true;
 
-	int currentComboLength;
-	bool canCombo;
+	UPROPERTY(EditAnywhere)
+		bool bRecieveKnockback = true;
 
+private:
 	UFUNCTION()
 		void HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult);
+
+	TWeakObjectPtr<UAnimMontage> currentAttackMontage;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -77,26 +63,11 @@ public:
 		UCombatComponent* GetCombatComponent();
 
 	UFUNCTION(BlueprintCallable)
-		void PlayAnimMontage(UAnimMontage* animMontage);
-
-	UFUNCTION(BlueprintCallable)
 		UAnimMontage* GetCurrentMontage();
-
-	UFUNCTION(BlueprintCallable)
-		bool MontageIsAttack(UAnimMontage* inMontage);
 
 	UFUNCTION(BlueprintCallable)
 		bool IsAttacking();
 
 	UFUNCTION(BlueprintCallable)
-		int GetAttackIndexFromName(FName atackName);
-
-	UFUNCTION(BlueprintCallable)
-		void DoAttack(FName attackName);
-
-	UFUNCTION(BlueprintCallable)
-		void EnableCombo();
-
-	UFUNCTION(BlueprintCallable)
-		void ResetCombo();
+		void DoAttackMontage(UAnimMontage* attackMontage, bool interruptCurrentAttack);
 };

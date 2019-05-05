@@ -1,13 +1,13 @@
 #include "AnimNotifyState_ComboSection.h"
 
 void UAnimNotifyState_ComboSection::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
-	if(owningPawn == nullptr)
-		owningPawn = Cast<ACombatPawn, AActor>(MeshComponent->GetOwner());
+	if(owningPlayer == nullptr)
+		owningPlayer = Cast<APlayerPawn, AActor>(MeshComponent->GetOwner());
 	
-	if (owningPawn != nullptr) {
-		owningPawn->OnAttack.RemoveDynamic(this, &UAnimNotifyState_ComboSection::OnPawnAttack);
-		owningPawn->OnAttack.AddDynamic(this, &UAnimNotifyState_ComboSection::OnPawnAttack);
-		owningPawn->EnableCombo();
+	if (owningPlayer != nullptr) {
+		owningPlayer->OnAttack.RemoveDynamic(this, &UAnimNotifyState_ComboSection::OnPawnAttack);
+		owningPlayer->OnAttack.AddDynamic(this, &UAnimNotifyState_ComboSection::OnPawnAttack);
+		owningPlayer->EnableCombo();
 	}
 	isInitialTick = true;
 	hasAttacked = false;
@@ -23,9 +23,9 @@ void UAnimNotifyState_ComboSection::NotifyTick(USkeletalMeshComponent* MeshCompo
 }
 
 void UAnimNotifyState_ComboSection::NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence) {
-	if (owningPawn != nullptr) {
+	if (owningPlayer != nullptr) {
 		if(!hasAttacked)
-			owningPawn->ResetCombo();
+			owningPlayer->ResetCombo();
 	}
 
 	Received_NotifyEnd(MeshComponent, AnimationSequence);

@@ -33,6 +33,9 @@ void ACombatPawn::Tick(float DeltaTime)
 		FTransform rootTransform = skeletalMesh->ConsumeRootMotion().GetRootMotionTransform();
 		movementComponent->Move(skeletalMesh->GetComponentRotation().RotateVector(rootTransform.GetLocation()));
 	}
+
+	if (currentAttackMontage != nullptr && GetCurrentMontage() == nullptr)
+		currentAttackMontage = nullptr;
 }
 
 void ACombatPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -53,28 +56,13 @@ UVelocityMovementComponent* ACombatPawn::GetMovement() {
 	return movementComponent;
 }
 
-void ACombatPawn::PlayAnimMontage(UAnimMontage* animMontage) {
-	skeletalMesh->GetAnimInstance()->Montage_Play(animMontage);
-}
-
 UAnimMontage* ACombatPawn::GetCurrentMontage() {
 	return skeletalMesh->GetAnimInstance()->GetCurrentActiveMontage();
 }
 
-bool ACombatPawn::MontageIsAttack(UAnimMontage* inMontage) {
-	bool returnValue = false;
-	for (int i = 0; i < attacks.Num(); i++) {
-		if (attacks[i].attackComboOrder.Contains(inMontage)) {
-			returnValue = true;
-			break;
-		}
-	}
-	return returnValue;
-}
-
 bool ACombatPawn::IsAttacking() {
 	if (GetCurrentMontage() != nullptr) {
-		if (MontageIsAttack(GetCurrentMontage())) {
+		if (GetCurrentMontage() == currentAttackMontage) {
 			return true;
 		}
 		else {
@@ -85,37 +73,11 @@ bool ACombatPawn::IsAttacking() {
 		return false;
 	}
 }
- 
-int ACombatPawn::GetAttackIndexFromName(FName attackName) {
-	int returnAttack = -1;
-	for (int i = 0; i < attacks.Num(); i++) {
-		if (attacks[i].attackName == attackName) {
-			returnAttack = i;
-			break;
-		}
-	}
-	return returnAttack;
-}
 
-void ACombatPawn::DoAttack(FName attackName) {
-	FAttack attack = attacks[GetAttackIndexFromName(attackName)];
-	if (!IsAttacking()) {
-		PlayAnimMontage(attack.attackComboOrder[0]);
+void ACombatPawn::DoAttackMontage(UAnimMontage* attackMontage, bool interruptCurrentAttack) {
+	if (!IsAttacking() || interruptCurrentAttack) {
+		skeletalMesh->GetAnimInstance()->Montage_Play(attackMontage);
+		currentAttackMontage = attackMontage;
 		OnAttack.Broadcast();
 	}
-	else if(canCombo && currentComboLength <= attack.attackComboOrder.Num() - 1){
-		canCombo = false;
-		PlayAnimMontage(attack.attackComboOrder[currentComboLength]);
-		OnAttack.Broadcast();
-	}
-}
-
-void ACombatPawn::EnableCombo() {
-	canCombo = true;
-	currentComboLength += 1;
-}
-
-void ACombatPawn::ResetCombo() {
-	canCombo = false;
-	currentComboLength = 0;
 }

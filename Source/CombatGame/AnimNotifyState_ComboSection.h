@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "CombatPawn.h"
+#include "PlayerPawn.h"
 #include "AnimNotifyState_ComboSection.generated.h"
 
 /**
@@ -23,7 +23,7 @@ public:
 private:
 	bool isInitialTick;
 	bool hasAttacked;
-	TWeakObjectPtr<ACombatPawn> owningPawn;
+	TWeakObjectPtr<APlayerPawn> owningPlayer;
 
 private:
 	UFUNCTION()
