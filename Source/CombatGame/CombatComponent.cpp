@@ -13,6 +13,7 @@ void UCombatComponent::BeginPlay()
 FVector UCombatComponent::GetKnockbackVector(UHurtbox* hitCollider, UHitbox* attackingCollider){
 	FVector horizontalVector = hitCollider->GetOwner()->GetActorLocation() - attackingCollider->GetOwner()->GetActorLocation();
 	horizontalVector = horizontalVector.GetClampedToMaxSize(1.0f) * attackingCollider->GetHorizontalKnockback();
+	horizontalVector = FVector(horizontalVector.X, horizontalVector.Y, 0.0f);
 	FVector verticalVector = FVector(0.0f, 0.0f, attackingCollider->GetVerticalKnockback());
 	return horizontalVector + verticalVector;
 }

@@ -41,11 +41,20 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 			AddGravity(gravitySpeed * DeltaSeconds);
 
 		if (bInHitstun) {
-			if (GetGravity() < -extraKnockbackAirtime)
+			bool verticalStunOver = true;
+			bool horizontalStunOver = true;
+			if (GetGravity() < -extraKnockbackAirtime) {
 				AddGravity(-(GetGravity() * knockbackSpeed) * DeltaSeconds);
+				verticalStunOver = false;
+			}
 
-			if(GetVelocityNoGravity().Size() > currentHorizontalKnockback)
+			if (GetVelocityNoGravity().Size() > currentHorizontalKnockback) {
 				AddVelocity(-(GetVelocityNoGravity() * knockbackSpeed) * DeltaSeconds);
+				horizontalStunOver = false;
+			}
+
+			if (verticalStunOver && horizontalStunOver && GetGravity() > 0.0f)
+				bInHitstun = false;
 		}
 
 		if (bIsJumping) {
@@ -63,7 +72,10 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		}
 	}
 	Move(velocity * DeltaSeconds);
-	
+
+	if(!IsOnGround() && bInHitstun)
+		GEngine->AddOnScreenDebugMessage(-1, DeltaSeconds, FColor::Yellow, TEXT("Air Stun"));
+
 	if (bTickOffWalkingNextFrame) {
 		bTickOffWalkingNextFrame = false;
 		bIsWalking = false;
