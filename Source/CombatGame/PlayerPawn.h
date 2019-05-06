@@ -6,12 +6,12 @@
 #include "CombatPawn.h"
 #include "PlayerPawn.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FAttackGroup {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-		FName attackName;
+		FName attackGroupName;
 
 	UPROPERTY(EditAnywhere)
 		TArray<UAnimMontage*> starters;
@@ -24,6 +24,8 @@ UCLASS()
 class COMBATGAME_API APlayerPawn : public ACombatPawn
 {
 	GENERATED_BODY()
+public:
+	APlayerPawn();
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -33,15 +35,18 @@ private:
 		int maxFinisherAttacks = 1;
 
 	UPROPERTY(EditAnywhere)
-		FAttackGroup groundAttacks;
+		TArray<FAttackGroup> attackGroups;
 
 	int starterAttackCount;
 	int finisherAttackCount;
-	bool canCombo;
+	bool bCanCombo;
 
 public:
 	UFUNCTION(BlueprintCallable)
-		void GroundAttack();
+		FAttackGroup GetAttackGroupFromName(FName attackGroupName);
+
+	UFUNCTION(BlueprintCallable)
+		void DoAttackFromGroup(FName attackGroupName);
 
 	UFUNCTION(BlueprintCallable)
 		void EnableCombo();

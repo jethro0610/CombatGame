@@ -2,38 +2,54 @@
 
 #include "PlayerPawn.h"
 
+APlayerPawn::APlayerPawn() {
+	FAttackGroup groundAttacks;
+	groundAttacks.attackGroupName = FName("Ground Attacks");
+	attackGroups.Add(groundAttacks);
+
+	FAttackGroup airAttacks;
+	airAttacks.attackGroupName = FName("Air Attacks");
+	attackGroups.Add(airAttacks);
+}
+
 void APlayerPawn::EnableCombo() {
-	canCombo = true;
 	if (starterAttackCount < maxStarterAttacks) {
 		starterAttackCount += 1;
 	}
 	else if(finisherAttackCount < maxFinisherAttacks){
 		finisherAttackCount += 1;
 	}
+	bCanCombo = true;
 }
 
 void APlayerPawn::ResetCombo() {
 	starterAttackCount = 0;
 	finisherAttackCount = 0;
-	canCombo = false;
+	bCanCombo = false;
 }
 
-void APlayerPawn::GroundAttack() {
-	if (!IsAttacking()) {
-		if (starterAttackCount < maxStarterAttacks) {
-			DoAttackMontage(groundAttacks.starters[0], true);
-		}
-		else if (finisherAttackCount < maxFinisherAttacks) {
-			DoAttackMontage(groundAttacks.finishers[0], true);
+FAttackGroup APlayerPawn::GetAttackGroupFromName(FName attackGroupName) {
+	FAttackGroup returnGroup;
+	for (int i = 0; i < attackGroups.Num(); i++)
+	{
+		if (attackGroups[i].attackGroupName == attackGroupName) {
+			returnGroup = attackGroups[i];
 		}
 	}
-	else if (canCombo) {
-		canCombo = false;
-		if (starterAttackCount < maxStarterAttacks) {
-			DoAttackMontage(groundAttacks.starters[0], true);
+	return returnGroup;
+}
+
+void APlayerPawn::DoAttackFromGroup(FName attackGroupName) {
+	FAttackGroup currentAttackGroup = GetAttackGroupFromName(attackGroupName);
+	if (!IsAttacking() || bCanCombo) {
+		if (starterAttackCount < maxStarterAttacks && currentAttackGroup.starters.Num() > 0) {
+			int attackIndex = starterAttackCount % currentAttackGroup.starters.Num();
+			DoAttackMontage(currentAttackGroup.starters[attackIndex], true);
 		}
-		else if(finisherAttackCount < maxFinisherAttacks) {
-			DoAttackMontage(groundAttacks.finishers[0], true);
+		else if (finisherAttackCount < maxFinisherAttacks && currentAttackGroup.finishers.Num() > 0) {
+			int attackIndex = finisherAttackCount % currentAttackGroup.finishers.Num();
+			DoAttackMontage(currentAttackGroup.finishers[attackIndex], true);
 		}
+		bCanCombo = false;
 	}
 }
