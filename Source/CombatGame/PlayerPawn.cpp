@@ -140,7 +140,9 @@ void APlayerPawn::InputCameraY(float axisValue) {
 }
 
 void APlayerPawn::InputJump() {
-	GetMovement()->Jump();
+	if (!IsAttacking() || bCanCombo) {
+		GetMovement()->Jump();
+	}
 }
 
 void APlayerPawn::InputReleaseJump() {
@@ -150,9 +152,13 @@ void APlayerPawn::InputReleaseJump() {
 }
 
 void APlayerPawn::InputAttack() {
-	if (currentTarget != nullptr && !IsAttacking()) {
-		FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), currentTarget->GetActorLocation());
-		SetActorRotation(FRotator(0.0f, lookAtRotation.Yaw, 0.0f));
+	if (currentTarget != nullptr) {
+		if (!IsAttacking() || bCanCombo) {
+			if (FVector::Dist(GetActorLocation(), currentTarget->GetActorLocation()) < maxTargetDistance) {
+				FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), currentTarget->GetActorLocation());
+				SetActorRotation(FRotator(0.0f, lookAtRotation.Yaw, 0.0f));
+			}
+		}
 	}
 	if (GetMovement()->IsOnGround()) {
 		DoAttackFromGroup("Ground Attacks");

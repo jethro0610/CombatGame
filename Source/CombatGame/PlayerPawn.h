@@ -48,7 +48,13 @@ private:
 	UPROPERTY(EditAnywhere)
 		TArray<FAttackGroup> attackGroups;
 
-	TWeakObjectPtr<AActor> currentTarget;
+	UPROPERTY(EditAnywhere)
+		float maxAttackDistSpeed;
+
+	UPROPERTY(EditAnywhere)
+		float maxTargetDistance;
+
+	TWeakObjectPtr<ACombatPawn> currentTarget;
 
 	int starterAttackCount;
 	int finisherAttackCount;
