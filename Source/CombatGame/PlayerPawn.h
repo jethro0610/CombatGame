@@ -48,6 +48,8 @@ private:
 	UPROPERTY(EditAnywhere)
 		TArray<FAttackGroup> attackGroups;
 
+	TWeakObjectPtr<AActor> currentTarget;
+
 	int starterAttackCount;
 	int finisherAttackCount;
 	bool bCanCombo;
@@ -67,6 +69,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void ResetCombo();
+
+	UFUNCTION(BlueprintCallable)
+		ACombatPawn* GetNearestCombatPawn();
 
 private:
 	void InputMoveX(float axisValue);

@@ -1,4 +1,6 @@
 #include "PlayerPawn.h"
+#include "EngineUtils.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Components/InputComponent.h"
 
 APlayerPawn::APlayerPawn() {
@@ -41,6 +43,8 @@ void APlayerPawn::Tick(float DeltaTime) {
 			SetActorRotation(walkDirection.ToOrientationRotator());
 		}
 	}
+
+	currentTarget = GetNearestCombatPawn();
 }
 
 void APlayerPawn::EnableCombo() {
@@ -85,6 +89,22 @@ void APlayerPawn::DoAttackFromGroup(FName attackGroupName) {
 	}
 }
 
+ACombatPawn* APlayerPawn::GetNearestCombatPawn() {
+	float dist = -1.0f;
+	ACombatPawn* returnPawn = nullptr;
+	for (TActorIterator<ACombatPawn> actorItr(GetWorld()); actorItr; ++actorItr) {
+		ACombatPawn* currentPawn = *actorItr;
+		if (currentPawn != this) {
+			float currentDist = FVector::Dist(GetActorLocation(), currentPawn->GetActorLocation());
+			if (currentDist <= dist || dist == -1.0f) {
+				returnPawn = currentPawn;
+				dist = currentDist;
+			}
+		}
+	}
+	return returnPawn;
+}
+
 void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -125,11 +145,15 @@ void APlayerPawn::InputJump() {
 
 void APlayerPawn::InputReleaseJump() {
 	if (GetMovement()->GetGravity() < 0.0f) {
-		GetMovement()->SetGravity(GetMovement()->GetGravity() / 2.0f);
+		GetMovement()->SetGravity(GetMovement()->GetGravity() / 3.0f);
 	}
 }
 
 void APlayerPawn::InputAttack() {
+	if (currentTarget != nullptr && !IsAttacking()) {
+		FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), currentTarget->GetActorLocation());
+		SetActorRotation(FRotator(0.0f, lookAtRotation.Yaw, 0.0f));
+	}
 	if (GetMovement()->IsOnGround()) {
 		DoAttackFromGroup("Ground Attacks");
 	}
