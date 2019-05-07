@@ -94,6 +94,7 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("CameraX", this, &APlayerPawn::InputCameraX);
 	PlayerInputComponent->BindAxis("CameraY", this, &APlayerPawn::InputCameraY);
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &APlayerPawn::InputJump);
+	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &APlayerPawn::InputReleaseJump);
 	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerPawn::InputAttack);
 }
 
@@ -120,6 +121,12 @@ void APlayerPawn::InputCameraY(float axisValue) {
 
 void APlayerPawn::InputJump() {
 	GetMovement()->Jump();
+}
+
+void APlayerPawn::InputReleaseJump() {
+	if (GetMovement()->GetGravity() < 0.0f) {
+		GetMovement()->SetGravity(GetMovement()->GetGravity() / 2.0f);
+	}
 }
 
 void APlayerPawn::InputAttack() {

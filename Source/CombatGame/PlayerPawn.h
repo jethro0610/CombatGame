@@ -74,6 +74,7 @@ private:
 	void InputCameraX(float axisValue);
 	void InputCameraY(float axisValue);
 	void InputJump();
+	void InputReleaseJump();
 	void InputAttack();
 
 	UFUNCTION()
