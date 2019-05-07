@@ -1,6 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "PlayerPawn.h"
+#include "Components/InputComponent.h"
 
 APlayerPawn::APlayerPawn() {
 	FAttackGroup groundAttacks;
@@ -10,6 +9,38 @@ APlayerPawn::APlayerPawn() {
 	FAttackGroup airAttacks;
 	airAttacks.attackGroupName = FName("Air Attacks");
 	attackGroups.Add(airAttacks);
+
+	cameraSpringArm = CreateDefaultSubobject<USpringArmComponent>("Spring Arm");
+	cameraSpringArm->bInheritYaw = false;
+	cameraSpringArm->bInheritPitch = false;
+	cameraSpringArm->bInheritRoll = false;
+	cameraSpringArm->bAbsoluteRotation = true;
+	cameraSpringArm->AttachTo(RootComponent);
+
+	camera = CreateDefaultSubobject<UCameraComponent>("Camera");
+	camera->AttachTo(cameraSpringArm);
+}
+
+void APlayerPawn::BeginPlay() {
+	Super::BeginPlay();
+
+	GetMovement()->OnEnterGround.AddDynamic(this, &APlayerPawn::PlayerEnterGround);
+	GetMovement()->OnLeaveGround.AddDynamic(this, &APlayerPawn::PlayerLeaveGround);
+}
+
+void APlayerPawn::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	if (!IsAttacking() && cameraSpringArm != nullptr) {
+		if (moveYInput != 0.0f || moveXInput != 0.0f) {
+			FVector forwardWalkDirection = moveYInput * camera->GetForwardVector();
+			FVector rightWalkDirection = moveXInput * camera->GetRightVector();
+			FVector walkDirection = forwardWalkDirection + rightWalkDirection;
+			walkDirection = FVector(walkDirection.X, walkDirection.Y, 0.0f);
+			GetMovement()->Walk(walkDirection, walkDirection.Size());
+			SetActorRotation(walkDirection.ToOrientationRotator());
+		}
+	}
 }
 
 void APlayerPawn::EnableCombo() {
@@ -52,4 +83,60 @@ void APlayerPawn::DoAttackFromGroup(FName attackGroupName) {
 		}
 		bCanCombo = false;
 	}
+}
+
+void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAxis("MoveX", this, &APlayerPawn::InputMoveX);
+	PlayerInputComponent->BindAxis("MoveY", this, &APlayerPawn::InputMoveY);
+	PlayerInputComponent->BindAxis("CameraX", this, &APlayerPawn::InputCameraX);
+	PlayerInputComponent->BindAxis("CameraY", this, &APlayerPawn::InputCameraY);
+	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &APlayerPawn::InputJump);
+	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerPawn::InputAttack);
+}
+
+void APlayerPawn::InputMoveX(float axisValue) {
+	moveXInput = axisValue;
+}
+
+void APlayerPawn::InputMoveY(float axisValue) {
+	moveYInput = axisValue;
+}
+
+void APlayerPawn::InputCameraX(float axisValue) {
+	float newCameraXRotation = cameraSpringArm->GetComponentRotation().Yaw + axisValue;
+	FRotator newCameraRotation = FRotator(cameraSpringArm->GetComponentRotation().Pitch, newCameraXRotation, 0.0f);
+	cameraSpringArm->SetWorldRotation(newCameraRotation);
+}
+
+void APlayerPawn::InputCameraY(float axisValue) {
+	float newCameraYRotation = cameraSpringArm->GetComponentRotation().Pitch + axisValue;
+	newCameraYRotation = FMath::Clamp(newCameraYRotation, -90.0f, 90.0f);
+	FRotator newCameraRotation = FRotator(newCameraYRotation, cameraSpringArm->GetComponentRotation().Yaw, 0.0f);
+	cameraSpringArm->SetWorldRotation(newCameraRotation);
+}
+
+void APlayerPawn::InputJump() {
+	GetMovement()->Jump();
+}
+
+void APlayerPawn::InputAttack() {
+	if (GetMovement()->IsOnGround()) {
+		DoAttackFromGroup("Ground Attacks");
+	}
+	else {
+		DoAttackFromGroup("Air Attacks");
+	}
+}
+
+void APlayerPawn::PlayerEnterGround() {
+	CancelAttack();
+	ResetCombo();
+}
+
+void APlayerPawn::PlayerLeaveGround() {
+	CancelAttack();
+	ResetCombo();
 }

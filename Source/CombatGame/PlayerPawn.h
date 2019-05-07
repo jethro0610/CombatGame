@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "CombatPawn.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 #include "PlayerPawn.generated.h"
 
 USTRUCT(BlueprintType)
@@ -26,8 +26,19 @@ class COMBATGAME_API APlayerPawn : public ACombatPawn
 	GENERATED_BODY()
 public:
 	APlayerPawn();
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(VisibleAnywhere)
+		USpringArmComponent* cameraSpringArm;
+
+	UPROPERTY(VisibleAnywhere)
+		UCameraComponent* camera;
+
 	UPROPERTY(EditAnywhere)
 		int maxStarterAttacks = 2;
 
@@ -41,6 +52,9 @@ private:
 	int finisherAttackCount;
 	bool bCanCombo;
 
+	float moveXInput;
+	float moveYInput;
+
 public:
 	UFUNCTION(BlueprintCallable)
 		FAttackGroup GetAttackGroupFromName(FName attackGroupName);
@@ -53,4 +67,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void ResetCombo();
+
+private:
+	void InputMoveX(float axisValue);
+	void InputMoveY(float axisValue);
+	void InputCameraX(float axisValue);
+	void InputCameraY(float axisValue);
+	void InputJump();
+	void InputAttack();
+
+	UFUNCTION()
+		void PlayerEnterGround();
+
+	UFUNCTION()
+		void PlayerLeaveGround();
 };

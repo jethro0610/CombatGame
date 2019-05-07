@@ -73,9 +73,6 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	}
 	Move(velocity * DeltaSeconds);
 
-	if(!IsOnGround() && bInHitstun)
-		GEngine->AddOnScreenDebugMessage(-1, DeltaSeconds, FColor::Yellow, TEXT("Air Stun"));
-
 	if (bTickOffWalkingNextFrame) {
 		bTickOffWalkingNextFrame = false;
 		bIsWalking = false;

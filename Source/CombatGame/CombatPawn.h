@@ -24,8 +24,6 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 public:
 	UPROPERTY(BlueprintAssignable)
 		FAttackDelegate OnAttack;
@@ -70,4 +68,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void DoAttackMontage(UAnimMontage* attackMontage, bool interruptCurrentAttack);
+
+	UFUNCTION(BlueprintCallable)
+		void CancelAttack();
 };

@@ -15,7 +15,6 @@ ACombatPawn::ACombatPawn()
 	combatComponent = CreateDefaultSubobject<UCombatComponent>("Combat Component");
 
 	movementComponent = CreateDefaultSubobject<UVelocityMovementComponent>("Movement Component");
-	movementComponent->SetHalfHeight(collisionCapsule->GetScaledCapsuleHalfHeight());
 	movementComponent->SetUpdatedComponent(RootComponent);
 }
 
@@ -23,6 +22,7 @@ void ACombatPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	combatComponent->OnHitByAttack.AddDynamic(this, &ACombatPawn::HitByAttack);
+	movementComponent->SetHalfHeight(collisionCapsule->GetScaledCapsuleHalfHeight());
 }
 
 void ACombatPawn::Tick(float DeltaTime)
@@ -36,11 +36,6 @@ void ACombatPawn::Tick(float DeltaTime)
 
 	if (currentAttackMontage != nullptr && GetCurrentMontage() == nullptr)
 		currentAttackMontage = nullptr;
-}
-
-void ACombatPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 void ACombatPawn::HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult) {
@@ -80,4 +75,9 @@ void ACombatPawn::DoAttackMontage(UAnimMontage* attackMontage, bool interruptCur
 		currentAttackMontage = attackMontage;
 		OnAttack.Broadcast();
 	}
+}
+
+void ACombatPawn::CancelAttack() {
+	if (IsAttacking())
+		skeletalMesh->GetAnimInstance()->Montage_Stop(0.05f, GetCurrentMontage());
 }
