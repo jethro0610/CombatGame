@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -14,4 +12,13 @@ class COMBATGAME_API UAnimNotify_SetVelocity : public UAnimNotify
 {
 	GENERATED_BODY()
 	
+private:
+	virtual void Notify(USkeletalMeshComponent* meshComponent, UAnimSequenceBase* animSequence) override;
+
+public:
+	UPROPERTY(EditAnywhere)
+		float forwardVelocity;
+
+	UPROPERTY(EditAnywhere)
+		float verticalVelocity;
 };

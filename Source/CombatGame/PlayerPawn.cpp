@@ -140,9 +140,7 @@ void APlayerPawn::InputCameraY(float axisValue) {
 }
 
 void APlayerPawn::InputJump() {
-	if (!IsAttacking() || bCanCombo) {
-		GetMovement()->Jump();
-	}
+	GetMovement()->Jump();
 }
 
 void APlayerPawn::InputReleaseJump() {
