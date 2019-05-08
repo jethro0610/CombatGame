@@ -22,17 +22,17 @@ private:
 	UPROPERTY(EditAnywhere)
 		float groundDistance = 1.0f;
 	UPROPERTY(EditAnywhere)
-		float friction = 6.0f;
+		float friction = 20.0f;
 	UPROPERTY(EditAnywhere)
-		float acceleration = 3000.0f;
+		float acceleration = 15000.0f;
 	UPROPERTY(EditAnywhere)
-		float gravitySpeed = 500.0f;
+		float gravitySpeed = 800.0f;
 	UPROPERTY(EditAnywhere)
 		float maxGravity = 10000.0f;
 	UPROPERTY(EditAnywhere)
-		float jumpHeight = 400.0f;
+		float jumpHeight = 350.0f;
 	UPROPERTY(EditAnywhere)
-		float jumpSpeed = 6.0f;
+		float jumpSpeed = 4.0f;
 	UPROPERTY(EditAnywhere)
 		float knockbackSpeed = 12.0f;
 	UPROPERTY(EditAnywhere)
