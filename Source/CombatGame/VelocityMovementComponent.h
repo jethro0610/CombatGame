@@ -40,6 +40,7 @@ private:
 
 	bool bInHitstun;
 	float currentHorizontalKnockback;
+	float currentVerticalKnockback;
 
 	bool bGroundedLastFrame;
 	bool bTickOffWalkingNextFrame;
@@ -49,6 +50,8 @@ private:
 
 	FVector velocity;
 	float halfHeight;
+
+	FVector walkVector;
 
 	UFUNCTION()
 		void EnterGround();
@@ -86,6 +89,8 @@ public:
 		void AddVelocity(FVector deltaVelocity);
 	UFUNCTION(BlueprintCallable)
 		void SetVelocity(FVector newVelocity);
+	UFUNCTION(BlueprintCallable)
+		void SetVelocityNoGravity(FVector newVelocity);
 	UFUNCTION(BlueprintCallable)
 		void SetGravityEnabled(bool gravityEnabled);
 	UFUNCTION(BlueprintCallable)
