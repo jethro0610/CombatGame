@@ -39,15 +39,19 @@ private:
 		float knockbackResistance = 20.0f;
 	UPROPERTY(EditAnywhere)
 		float extraKnockbackAirtime = 5.0f;
-
-	float substepTickRate = 144.0f;
-	float substepBank = 0.0f;
-
 	UPROPERTY(EditAnywhere)
 		float speedInHitlag = 0.1f;
 
+	float substepTime = 0.0f;
+	float substepTickRate = 144.0f;
+	float substepBank = 0.0f;
+	FVector previousPosition;
+	FVector currentPosition;
+	FVector interpolatedPosition;
+
 	float currentHitlag;
 	bool bInHitstun;
+
 	float currentHorizontalKnockback;
 	float currentVerticalKnockback;
 
@@ -110,6 +114,9 @@ public:
 		void ApplyHitlag(float secondsOfHitlag);
 	UFUNCTION(BlueprintCallable)
 		bool IsInHitlag();
+
+	UFUNCTION(BlueprintCallable)
+		FVector GetInterpolatedPosition();
 
 	UFUNCTION(BlueprintCallable)
 		void Walk(FVector walkDirection, float walkSpeed);

@@ -10,6 +10,10 @@ void UVelocityMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	OnEnterGround.AddDynamic(this, &UVelocityMovementComponent::EnterGround);
+
+	previousPosition = GetOwner()->GetActorLocation();
+	currentPosition = GetOwner()->GetActorLocation();
+	interpolatedPosition = GetOwner()->GetActorLocation();
 }
 
 void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
@@ -24,15 +28,22 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		speed = speedInHitlag;
 	}
 	substepBank += ((DeltaTime) / (1.0f / substepTickRate)) * speed;
-	int numberOfTicks = FMath::RoundToInt(substepBank);
-	substepBank -= numberOfTicks;
+	int numberOfTicks = FMath::RoundFromZero(substepBank);
+	if (substepBank >= 1.0f) {
+		substepBank -= numberOfTicks;
+	}
+	else {
+		numberOfTicks = 0;
+	}
 	for (int i = 0; i < numberOfTicks; i++) {
 		CalculateMovement();
 	}
 	walkVector = FVector::ZeroVector;
+	interpolatedPosition = FMath::Lerp(previousPosition, currentPosition, substepBank);
 }
 
 void UVelocityMovementComponent::CalculateMovement() {
+	substepTime = GetWorld()->TimeSeconds;
 	if (IsOnGround()) {
 		if (!bInHitstun) {
 			AddVelocity(walkVector);
@@ -91,6 +102,9 @@ void UVelocityMovementComponent::CalculateMovement() {
 		}
 	}
 	Move(velocity);
+
+	previousPosition = currentPosition;
+	currentPosition = GetOwner()->GetActorLocation();
 }
 
 void UVelocityMovementComponent::EnterGround() {
@@ -174,6 +188,10 @@ void UVelocityMovementComponent::ApplyHitlag(float secondsOfHitlag) {
 
 bool UVelocityMovementComponent::IsInHitlag() {
 	return (currentHitlag > 0.0f);
+}
+
+FVector UVelocityMovementComponent::GetInterpolatedPosition() {
+	return interpolatedPosition;
 }
 
 void UVelocityMovementComponent::Walk(FVector walkDirection, float walkSpeed) {

@@ -62,6 +62,8 @@ private:
 
 	TWeakObjectPtr<UAnimMontage> currentAttackMontage;
 
+	FVector modelOffset;
+
 public:
 	UFUNCTION(BlueprintCallable)
 		UVelocityMovementComponent* GetMovement();

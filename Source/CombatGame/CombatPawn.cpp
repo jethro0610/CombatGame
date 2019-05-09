@@ -24,6 +24,8 @@ void ACombatPawn::BeginPlay()
 	combatComponent->OnHitByAttack.AddDynamic(this, &ACombatPawn::HitByAttack);
 	combatComponent->OnLandAttack.AddDynamic(this, &ACombatPawn::LandAttack);
 	movementComponent->SetHalfHeight(collisionCapsule->GetScaledCapsuleHalfHeight());
+
+	modelOffset = skeletalMesh->GetComponentLocation() - GetActorLocation();
 }
 
 void ACombatPawn::Tick(float DeltaTime)
@@ -46,6 +48,8 @@ void ACombatPawn::Tick(float DeltaTime)
 			GetCurrentMontage()->RateScale = 1.0f;
 		}
 	}
+
+	skeletalMesh->SetWorldLocation(movementComponent->GetInterpolatedPosition() + modelOffset);
 }
 
 void ACombatPawn::HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult) {
