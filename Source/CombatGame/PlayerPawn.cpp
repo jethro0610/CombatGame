@@ -153,7 +153,7 @@ void APlayerPawn::InputAttack() {
 	if (currentTarget != nullptr) {
 		if (!IsAttacking() || bCanCombo) {
 			if (FVector::Dist(GetActorLocation(), currentTarget->GetActorLocation()) < maxTargetDistance) {
-				FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), currentTarget->GetActorLocation());
+				FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), currentTarget->GetActorLocation() + (currentTarget->GetMovement()->GetVelocity() * 5.0f));
 				SetActorRotation(FRotator(0.0f, lookAtRotation.Yaw, 0.0f));
 			}
 		}
