@@ -4,7 +4,10 @@
 #include "Components/CapsuleComponent.h"
 #include "Hitbox.generated.h"
 
+class UHurtbox;
 class UCombatComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDeleteHitboxDelegate, UHitbox*, hitboxDestroyed);
 
 UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
 class COMBATGAME_API UHitbox : public UCapsuleComponent
@@ -32,10 +35,18 @@ private:
 
 	TWeakObjectPtr<UCombatComponent> combatComponent;
 
+	TArray<TWeakObjectPtr<UHurtbox>> contactedHurtboxes;
+
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult);
 
 public:
+	UPROPERTY(BlueprintAssignable)
+		FDeleteHitboxDelegate OnDeleteHitbox;
+
+	UFUNCTION(BlueprintCallable)
+		void DeleteHitbox();
+
 	UFUNCTION(Blueprintcallable)
 		void UpdateCombatComponent();
 

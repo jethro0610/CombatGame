@@ -23,7 +23,19 @@ public:
 protected:
 	virtual void BeginPlay() override;	
 
+private:
+	TArray<TWeakObjectPtr<UHitbox>> contactedHitboxes;
+
 public:
+	UFUNCTION(BlueprintCallable)
+		void AddContactedHitbox(UHitbox* hitbox);
+
+	UFUNCTION()
+		void OnContactedHitboxDeleted(UHitbox* hitboxDeleted);
+
+	UFUNCTION(BlueprintCallable)
+		bool HasContactedHitbox(UHitbox* hitbox);
+
 	UPROPERTY(BlueprintAssignable)
 		FLandAttackDelegate OnLandAttack;
 

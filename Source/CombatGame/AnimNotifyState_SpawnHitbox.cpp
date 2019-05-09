@@ -29,9 +29,8 @@ void UAnimNotifyState_SpawnHitbox::NotifyTick(USkeletalMeshComponent* MeshCompon
 }
 
 void UAnimNotifyState_SpawnHitbox::NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence) {
-	if (spawnedHitbox->IsValidLowLevel()) {
-		spawnedHitbox->UnregisterComponent();
-		spawnedHitbox->DestroyComponent();
+	if (spawnedHitbox != nullptr) {
+		spawnedHitbox->DeleteHitbox();
 		spawnedHitbox = nullptr;
 	}
 	Received_NotifyEnd(MeshComponent, AnimationSequence);

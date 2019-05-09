@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Hurtbox.generated.h"
 
+class UHitbox;
 class UCombatComponent;
 
 UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))

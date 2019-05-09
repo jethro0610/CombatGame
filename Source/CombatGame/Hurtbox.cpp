@@ -18,7 +18,11 @@ void UHurtbox::OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* other
 		if (HasCombatComponent()) {
 			UHitbox* connectingHitbox = Cast<UHitbox, UPrimitiveComponent>(otherComp);
 			if (connectingHitbox != nullptr) {
-				combatComponent->OnHitByAttack.Broadcast(this, connectingHitbox, sweepResult);
+				if (!combatComponent->HasContactedHitbox(connectingHitbox)) {
+					combatComponent->OnHitByAttack.Broadcast(this, connectingHitbox, sweepResult);
+					combatComponent->AddContactedHitbox(connectingHitbox);
+					connectingHitbox->OnDeleteHitbox.AddDynamic(combatComponent.Get(), &UCombatComponent::OnContactedHitboxDeleted);
+				}
 			}
 		}
 	}

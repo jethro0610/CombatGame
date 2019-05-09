@@ -10,6 +10,18 @@ void UCombatComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
+void UCombatComponent::AddContactedHitbox(UHitbox* hitbox) {
+	contactedHitboxes.Add(hitbox);
+}
+
+void UCombatComponent::OnContactedHitboxDeleted(UHitbox* hitboxDeleted) {
+	contactedHitboxes.Remove(hitboxDeleted);
+}
+
+bool UCombatComponent::HasContactedHitbox(UHitbox* hitbox) {
+	return contactedHitboxes.Contains(hitbox);
+}
+
 FVector UCombatComponent::GetKnockbackVector(UHurtbox* hitCollider, UHitbox* attackingCollider){
 	FVector horizontalVector = hitCollider->GetOwner()->GetActorLocation() - attackingCollider->GetOwner()->GetActorLocation();
 	horizontalVector = horizontalVector.GetClampedToSize(1.0f, 1.0f) * attackingCollider->GetHorizontalKnockback();

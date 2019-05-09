@@ -17,10 +17,18 @@ void UHitbox::OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherA
 		if (HasCombatComponent()) {
 			UHurtbox* connectingHurtbox = Cast<UHurtbox, UPrimitiveComponent>(otherComp);
 			if (connectingHurtbox != nullptr) {
-				combatComponent->OnLandAttack.Broadcast(this, connectingHurtbox, sweepResult);
+				if (!contactedHurtboxes.Contains(connectingHurtbox)) {
+					contactedHurtboxes.Add(connectingHurtbox);
+					combatComponent->OnLandAttack.Broadcast(this, connectingHurtbox, sweepResult);
+				}
 			}
 		}
 	}
+}
+
+void UHitbox::DeleteHitbox() {
+	OnDeleteHitbox.Broadcast(this);
+	DestroyComponent();
 }
 
 void UHitbox::UpdateCombatComponent() {
