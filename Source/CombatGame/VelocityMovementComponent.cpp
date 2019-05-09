@@ -25,64 +25,70 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 }
 
 void UVelocityMovementComponent::CalculateMovement() {
-	if (IsOnGround()) {
-		if (!bInHitstun) {
-			AddVelocity(walkVector);
-			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
-		}
-		else {
-			SetVelocityNoGravity(GetVelocityNoGravity() / (1.0f + (knockbackResistance / 100.0f)));
-			if (GetVelocityNoGravity().Size() <= 0.1f) {
-				bInHitstun = false;
-			}
-		}
-		if (GetGravity() > 0.0f)
-			SetGravity(0.0f);
-
-		if (!bGroundedLastFrame) {
-			bGroundedLastFrame = true;
-			OnEnterGround.Broadcast();
-		}
-	}
-	else {
-		if (bFrictionInAir)
-			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
-
-		if (bGravityEnabled)
-			AddGravity(gravitySpeed);
-
-		if (bInHitstun) {
-			bool verticalStunOver = true;
-			bool horizontalStunOver = true;
-			if (GetGravity() < -currentVerticalKnockback/(knockbackResistance/1.5f)) {
-				SetGravity(GetGravity() / (1.0f + (knockbackResistance / 100.0f)));
-				verticalStunOver = false;
-			}
-
-			if (GetVelocityNoGravity().Size() > currentHorizontalKnockback/(knockbackResistance/4.0f)) {
-				SetVelocityNoGravity(GetVelocityNoGravity() / (1.0f + (knockbackResistance/100.0f)));
-				horizontalStunOver = false;
-			}
-
-			if (verticalStunOver && horizontalStunOver && GetGravity() > 0.0f)
-				bInHitstun = false;
-		}
-
-		if (bIsJumping) {
-			if (GetGravity() < 0.0f) {
-				SetGravity(GetGravity() / (1.0f + (jumpResistance/100.0f)));
+	if (currentHitlag <= 0.0f) {
+		currentHitlag = 0.0f;
+		if (IsOnGround()) {
+			if (!bInHitstun) {
+				AddVelocity(walkVector);
+				SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
 			}
 			else {
-				bIsJumping = false;
+				SetVelocityNoGravity(GetVelocityNoGravity() / (1.0f + (knockbackResistance / 100.0f)));
+				if (GetVelocityNoGravity().Size() <= 0.1f) {
+					bInHitstun = false;
+				}
+			}
+			if (GetGravity() > 0.0f)
+				SetGravity(0.0f);
+
+			if (!bGroundedLastFrame) {
+				bGroundedLastFrame = true;
+				OnEnterGround.Broadcast();
 			}
 		}
+		else {
+			if (bFrictionInAir)
+				SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
 
-		if (bGroundedLastFrame) {
-			bGroundedLastFrame = false;
-			OnLeaveGround.Broadcast();
+			if (bGravityEnabled)
+				AddGravity(gravitySpeed);
+
+			if (bInHitstun) {
+				bool verticalStunOver = true;
+				bool horizontalStunOver = true;
+				if (GetGravity() < -currentVerticalKnockback / (knockbackResistance / 1.5f)) {
+					SetGravity(GetGravity() / (1.0f + (knockbackResistance / 100.0f)));
+					verticalStunOver = false;
+				}
+
+				if (GetVelocityNoGravity().Size() > currentHorizontalKnockback / (knockbackResistance / 4.0f)) {
+					SetVelocityNoGravity(GetVelocityNoGravity() / (1.0f + (knockbackResistance / 100.0f)));
+					horizontalStunOver = false;
+				}
+
+				if (verticalStunOver && horizontalStunOver && GetGravity() > 0.0f)
+					bInHitstun = false;
+			}
+
+			if (bIsJumping) {
+				if (GetGravity() < 0.0f) {
+					SetGravity(GetGravity() / (1.0f + (jumpResistance / 100.0f)));
+				}
+				else {
+					bIsJumping = false;
+				}
+			}
+
+			if (bGroundedLastFrame) {
+				bGroundedLastFrame = false;
+				OnLeaveGround.Broadcast();
+			}
 		}
+		Move(velocity);
 	}
-	Move(velocity);
+	else {
+		currentHitlag -= 1.0f / substepTickRate;
+	}
 }
 
 void UVelocityMovementComponent::EnterGround() {
@@ -158,6 +164,14 @@ void UVelocityMovementComponent::SetGravity(float newGravity) {
 	float updatedGravity = -newGravity;
 	updatedGravity = FMath::Max(-maxGravity, updatedGravity);
 	velocity = FVector(velocity.X, velocity.Y, updatedGravity);
+}
+
+void UVelocityMovementComponent::ApplyHitlag(int framesOfHitlag) {
+	currentHitlag = (1.0f/substepTickRate) * framesOfHitlag;
+}
+
+bool UVelocityMovementComponent::IsInHitlag() {
+	return (currentHitlag > 0.0f);
 }
 
 void UVelocityMovementComponent::Walk(FVector walkDirection, float walkSpeed) {

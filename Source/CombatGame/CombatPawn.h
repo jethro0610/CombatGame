@@ -42,6 +42,9 @@ protected:
 		UVelocityMovementComponent* movementComponent;
 
 	UPROPERTY(EditAnywhere)
+		int hitlagLength = 5;
+
+	UPROPERTY(EditAnywhere)
 		bool bApplyRootMotion = true;
 
 	UPROPERTY(EditAnywhere)
@@ -50,6 +53,9 @@ protected:
 private:
 	UFUNCTION()
 		void HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult);
+
+	UFUNCTION()
+		void LandAttack(UHitbox* attackingCollider, UHurtbox* hitCollider, FHitResult hitResult);
 
 	TWeakObjectPtr<UAnimMontage> currentAttackMontage;
 

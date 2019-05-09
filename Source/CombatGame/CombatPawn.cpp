@@ -22,6 +22,7 @@ void ACombatPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	combatComponent->OnHitByAttack.AddDynamic(this, &ACombatPawn::HitByAttack);
+	combatComponent->OnLandAttack.AddDynamic(this, &ACombatPawn::LandAttack);
 	movementComponent->SetHalfHeight(collisionCapsule->GetScaledCapsuleHalfHeight());
 }
 
@@ -36,11 +37,24 @@ void ACombatPawn::Tick(float DeltaTime)
 
 	if (currentAttackMontage != nullptr && GetCurrentMontage() == nullptr)
 		currentAttackMontage = nullptr;
+
+	if (movementComponent->IsInHitlag()) {
+		skeletalMesh->bPauseAnims = true;
+	}
+	else {
+		skeletalMesh->bPauseAnims = false;
+	}
 }
 
 void ACombatPawn::HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult) {
-	if (bRecieveKnockback)
+	if (bRecieveKnockback) {
 		movementComponent->ApplyKnockback(combatComponent->GetKnockbackVector(hitCollider, attackingCollider));
+		movementComponent->ApplyHitlag(hitlagLength);
+	}
+}
+
+void ACombatPawn::LandAttack(UHitbox* attackingCollider, UHurtbox* hitCollider, FHitResult hitResult) {
+	movementComponent->ApplyHitlag(hitlagLength);
 }
 
 UCombatComponent* ACombatPawn::GetCombatComponent() {

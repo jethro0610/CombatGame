@@ -43,6 +43,7 @@ private:
 	float substepTickRate = 144.0f;
 	float substepBank = 0.0f;
 
+	float currentHitlag;
 	bool bInHitstun;
 	float currentHorizontalKnockback;
 	float currentVerticalKnockback;
@@ -102,6 +103,10 @@ public:
 		void AddGravity(float deltaGravity);
 	UFUNCTION(BlueprintCallable)
 		void SetGravity(float newGravity);
+	UFUNCTION(BlueprintCallable)
+		void ApplyHitlag(int framesOfHitlag);
+	UFUNCTION(BlueprintCallable)
+		bool IsInHitlag();
 
 	UFUNCTION(BlueprintCallable)
 		void Walk(FVector walkDirection, float walkSpeed);
