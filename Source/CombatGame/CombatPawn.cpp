@@ -38,11 +38,13 @@ void ACombatPawn::Tick(float DeltaTime)
 	if (currentAttackMontage != nullptr && GetCurrentMontage() == nullptr)
 		currentAttackMontage = nullptr;
 
-	if (movementComponent->IsInHitlag()) {
-		skeletalMesh->bPauseAnims = true;
-	}
-	else {
-		skeletalMesh->bPauseAnims = false;
+	if (GetCurrentMontage() != nullptr) {
+		if (movementComponent->IsInHitlag()) {
+			GetCurrentMontage()->RateScale = animationHitlagSpeed;
+		}
+		else {
+			GetCurrentMontage()->RateScale = 1.0f;
+		}
 	}
 }
 
@@ -66,7 +68,12 @@ UVelocityMovementComponent* ACombatPawn::GetMovement() {
 }
 
 UAnimMontage* ACombatPawn::GetCurrentMontage() {
-	return skeletalMesh->GetAnimInstance()->GetCurrentActiveMontage();
+	if (skeletalMesh != nullptr && skeletalMesh->GetAnimInstance() != nullptr) {
+		return skeletalMesh->GetAnimInstance()->GetCurrentActiveMontage();
+	}
+	else {
+		return nullptr;
+	}
 }
 
 bool ACombatPawn::IsAttacking() {

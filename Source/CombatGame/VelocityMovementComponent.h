@@ -43,6 +43,9 @@ private:
 	float substepTickRate = 144.0f;
 	float substepBank = 0.0f;
 
+	UPROPERTY(EditAnywhere)
+		float speedInHitlag = 0.1f;
+
 	float currentHitlag;
 	bool bInHitstun;
 	float currentHorizontalKnockback;
@@ -104,7 +107,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetGravity(float newGravity);
 	UFUNCTION(BlueprintCallable)
-		void ApplyHitlag(int framesOfHitlag);
+		void ApplyHitlag(float secondsOfHitlag);
 	UFUNCTION(BlueprintCallable)
 		bool IsInHitlag();
 

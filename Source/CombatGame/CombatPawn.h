@@ -42,7 +42,10 @@ protected:
 		UVelocityMovementComponent* movementComponent;
 
 	UPROPERTY(EditAnywhere)
-		int hitlagLength = 5;
+		float hitlagLength = 0.25f;
+
+	UPROPERTY(EditAnywhere)
+		float animationHitlagSpeed = 0.01f;
 
 	UPROPERTY(EditAnywhere)
 		bool bApplyRootMotion = true;
