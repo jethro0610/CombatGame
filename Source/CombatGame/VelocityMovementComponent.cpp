@@ -15,15 +15,23 @@ void UVelocityMovementComponent::BeginPlay()
 void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	float DeltaSeconds = GetWorld()->DeltaTimeSeconds * 60.0f;
+	substepBank += (DeltaTime) / (1.0f / substepTickRate);
+	int numberOfTicks = FMath::RoundToInt(substepBank);
+	substepBank -= numberOfTicks;
+	for (int i = 0; i < numberOfTicks; i++) {
+		CalculateMovement();
+	}
+	walkVector = FVector::ZeroVector;
+}
+
+void UVelocityMovementComponent::CalculateMovement() {
 	if (IsOnGround()) {
 		if (!bInHitstun) {
-			AddVelocity(walkVector * DeltaSeconds);
-			SetVelocityNoGravity(GetVelocityNoGravity() * FMath::Pow(1.0f - friction, DeltaSeconds));
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::SanitizeFloat(GetVelocityNoGravity().Size()));
+			AddVelocity(walkVector);
+			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
 		}
 		else {
-			SetVelocityNoGravity(GetVelocityNoGravity() * FMath::Pow(1.0f / knockbackSpeed, DeltaSeconds));
+			SetVelocityNoGravity(GetVelocityNoGravity() / (1.0f + (knockbackResistance / 100.0f)));
 			if (GetVelocityNoGravity().Size() <= 0.1f) {
 				bInHitstun = false;
 			}
@@ -38,21 +46,21 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	}
 	else {
 		if (bFrictionInAir)
-			SetVelocityNoGravity(GetVelocityNoGravity() * FMath::Pow(1.0f - friction, DeltaSeconds));
+			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
 
-		if(bGravityEnabled)
-			AddGravity(gravitySpeed * DeltaSeconds);
+		if (bGravityEnabled)
+			AddGravity(gravitySpeed);
 
 		if (bInHitstun) {
 			bool verticalStunOver = true;
 			bool horizontalStunOver = true;
-			if (GetGravity() < -extraKnockbackAirtime) {
-				SetGravity(GetGravity() * FMath::Pow(1.0f / knockbackSpeed, DeltaSeconds));
+			if (GetGravity() < -currentVerticalKnockback/(knockbackResistance/1.5f)) {
+				SetGravity(GetGravity() / (1.0f + (knockbackResistance / 100.0f)));
 				verticalStunOver = false;
 			}
 
-			if (!verticalStunOver) {
-				SetVelocityNoGravity(GetVelocityNoGravity() * FMath::Pow(1.0f / knockbackSpeed, DeltaSeconds));
+			if (GetVelocityNoGravity().Size() > currentHorizontalKnockback/(knockbackResistance/4.0f)) {
+				SetVelocityNoGravity(GetVelocityNoGravity() / (1.0f + (knockbackResistance/100.0f)));
 				horizontalStunOver = false;
 			}
 
@@ -62,7 +70,7 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 		if (bIsJumping) {
 			if (GetGravity() < 0.0f) {
-				SetGravity(GetGravity() * FMath::Pow(1.0f / jumpSpeed, DeltaSeconds));
+				SetGravity(GetGravity() / (1.0f + (jumpResistance/100.0f)));
 			}
 			else {
 				bIsJumping = false;
@@ -74,16 +82,7 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 			OnLeaveGround.Broadcast();
 		}
 	}
-	Move(velocity * DeltaSeconds);
-
-	if (bTickOffWalkingNextFrame) {
-		bTickOffWalkingNextFrame = false;
-		bIsWalking = false;
-	}
-
-	if (bIsWalking) {
-		bTickOffWalkingNextFrame = true;
-	}
+	Move(velocity);
 }
 
 void UVelocityMovementComponent::EnterGround() {
@@ -113,7 +112,7 @@ bool UVelocityMovementComponent::IsOnGround() {
 }
 
 bool UVelocityMovementComponent::IsWalking() {
-	return bIsWalking;
+	return (walkVector.Size() > 0.05f);
 }
 
 bool UVelocityMovementComponent::IsJumping() {
@@ -166,11 +165,12 @@ void UVelocityMovementComponent::Walk(FVector walkDirection, float walkSpeed) {
 	FVector oneWalkDirection = walkDirection.GetClampedToMaxSize(1.0f);
 	if (IsOnGround() || bCanWalkInAir) {
 		walkVector = oneWalkDirection * walkSpeed * acceleration;
+		if (walkVector.Size() < 0.1f)
+			walkVector == FVector::ZeroVector;
 	}
 	else {
 		walkVector = FVector::ZeroVector;
 	}
-	bIsWalking = true;
 }
 
 void UVelocityMovementComponent::Move(FVector deltaVector) {
@@ -183,15 +183,15 @@ void UVelocityMovementComponent::Move(FVector deltaVector) {
 
 void UVelocityMovementComponent::Jump() {
 	if (IsOnGround()) {
-		SetGravity(-jumpHeight * jumpSpeed);
+		SetGravity(-jumpStrength);
 		bIsJumping = true;
 	}
 }
 
 void UVelocityMovementComponent::ApplyKnockback(FVector knockbackVelocity) {
-	SetVelocity(knockbackVelocity * knockbackSpeed);
-	currentHorizontalKnockback = FVector(knockbackVelocity.X, knockbackVelocity.Y, 0.0f).Size();
-	currentVerticalKnockback = knockbackVelocity.Z;
+	SetVelocity(knockbackVelocity * knockbackStrength);
+	currentHorizontalKnockback = FVector(knockbackVelocity.X, knockbackVelocity.Y, 0.0f).Size() * knockbackStrength;
+	currentVerticalKnockback = knockbackVelocity.Z * knockbackStrength;
 	bInHitstun = true;
 }
 

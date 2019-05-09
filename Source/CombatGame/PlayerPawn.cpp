@@ -127,13 +127,13 @@ void APlayerPawn::InputMoveY(float axisValue) {
 }
 
 void APlayerPawn::InputCameraX(float axisValue) {
-	float newCameraXRotation = cameraSpringArm->GetComponentRotation().Yaw + axisValue;
+	float newCameraXRotation = cameraSpringArm->GetComponentRotation().Yaw + (axisValue * 120.0f * GetWorld()->DeltaTimeSeconds);
 	FRotator newCameraRotation = FRotator(cameraSpringArm->GetComponentRotation().Pitch, newCameraXRotation, 0.0f);
 	cameraSpringArm->SetWorldRotation(newCameraRotation);
 }
 
 void APlayerPawn::InputCameraY(float axisValue) {
-	float newCameraYRotation = cameraSpringArm->GetComponentRotation().Pitch + axisValue;
+	float newCameraYRotation = cameraSpringArm->GetComponentRotation().Pitch + (axisValue * 120.0f * GetWorld()->DeltaTimeSeconds);
 	newCameraYRotation = FMath::Clamp(newCameraYRotation, -90.0f, 90.0f);
 	FRotator newCameraRotation = FRotator(newCameraYRotation, cameraSpringArm->GetComponentRotation().Yaw, 0.0f);
 	cameraSpringArm->SetWorldRotation(newCameraRotation);

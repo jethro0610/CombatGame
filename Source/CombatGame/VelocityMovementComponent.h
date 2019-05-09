@@ -20,38 +20,41 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere)
-		float groundDistance = 1.0f;
+		float groundDistance = 5.0f;
 	UPROPERTY(EditAnywhere)
-		float friction = 20.0f;
+		float friction = 0.15f;
 	UPROPERTY(EditAnywhere)
-		float acceleration = 15000.0f;
+		float acceleration = 1.0f;
 	UPROPERTY(EditAnywhere)
-		float gravitySpeed = 800.0f;
+		float gravitySpeed = 0.07f;
 	UPROPERTY(EditAnywhere)
-		float maxGravity = 10000.0f;
+		float maxGravity = 100.0f;
 	UPROPERTY(EditAnywhere)
-		float jumpHeight = 350.0f;
+		float jumpStrength = 15.0f;
 	UPROPERTY(EditAnywhere)
-		float jumpSpeed = 4.0f;
+		float jumpResistance = 3.0f;
 	UPROPERTY(EditAnywhere)
-		float knockbackSpeed = 12.0f;
+		float knockbackStrength = 1.0f;
 	UPROPERTY(EditAnywhere)
-		float extraKnockbackAirtime = 200.0f;
+		float knockbackResistance = 20.0f;
+	UPROPERTY(EditAnywhere)
+		float extraKnockbackAirtime = 5.0f;
+
+	float substepTickRate = 144.0f;
+	float substepBank = 0.0f;
 
 	bool bInHitstun;
 	float currentHorizontalKnockback;
 	float currentVerticalKnockback;
 
 	bool bGroundedLastFrame;
-	bool bTickOffWalkingNextFrame;
-	bool bIsWalking;
-
 	bool bIsJumping;
 
+	FVector walkVector;
 	FVector velocity;
 	float halfHeight;
 
-	FVector walkVector;
+	void CalculateMovement();
 
 	UFUNCTION()
 		void EnterGround();
