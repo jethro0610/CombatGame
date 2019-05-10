@@ -42,7 +42,7 @@ protected:
 		UVelocityMovementComponent* movementComponent;
 
 	UPROPERTY(EditAnywhere)
-		float hitlagLength = 0.25f;
+		float hitlagLength = 0.1f;
 
 	UPROPERTY(EditAnywhere)
 		float animationHitlagSpeed = 0.01f;

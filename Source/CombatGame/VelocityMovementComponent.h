@@ -40,7 +40,7 @@ private:
 	UPROPERTY(EditAnywhere)
 		float extraKnockbackAirtime = 5.0f;
 	UPROPERTY(EditAnywhere)
-		float speedInHitlag = 0.1f;
+		float speedInHitlag = 0.075f;
 
 	float substepTime = 0.0f;
 	float substepTickRate = 144.0f;
