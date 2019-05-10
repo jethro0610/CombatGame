@@ -17,13 +17,14 @@ class COMBATGAME_API ACombatPawn : public APawn
 
 public:
 	ACombatPawn();
+	virtual void OnConstruction(const FTransform &Transform) override;
 
 protected:
 	virtual void BeginPlay() override;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
-
+	
 public:
 	UPROPERTY(BlueprintAssignable)
 		FAttackDelegate OnAttack;

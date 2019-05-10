@@ -18,6 +18,10 @@ ACombatPawn::ACombatPawn()
 	movementComponent->SetUpdatedComponent(RootComponent);
 }
 
+void ACombatPawn::OnConstruction(const FTransform &Transform) {
+	skeletalMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -collisionCapsule->GetUnscaledCapsuleHalfHeight()));
+}
+
 void ACombatPawn::BeginPlay()
 {
 	Super::BeginPlay();
