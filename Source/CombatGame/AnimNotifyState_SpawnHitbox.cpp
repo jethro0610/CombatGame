@@ -22,8 +22,12 @@ void UAnimNotifyState_SpawnHitbox::NotifyTick(USkeletalMeshComponent* MeshCompon
 	currentMeshComponent = MeshComponent;
 	currentAnimation = Cast<UAnimMontage, UAnimSequenceBase>(AnimationSequence);
 
-	notifyStartTime = currentMeshComponent->GetAnimInstance()->ActiveAnimNotifyState[0].GetTriggerTime();
-	notifyEndTime = currentMeshComponent->GetAnimInstance()->ActiveAnimNotifyState[0].GetEndTriggerTime();
+	for (int i = 0; i < currentMeshComponent->GetAnimInstance()->ActiveAnimNotifyState.Num(); i++) {
+		if (currentMeshComponent->GetAnimInstance()->ActiveAnimNotifyState[i].NotifyStateClass == this) {
+			notifyStartTime = currentMeshComponent->GetAnimInstance()->ActiveAnimNotifyState[i].GetTriggerTime();
+			notifyEndTime = currentMeshComponent->GetAnimInstance()->ActiveAnimNotifyState[i].GetEndTriggerTime();
+		}
+	}
 
 	Received_NotifyTick(MeshComponent, AnimationSequence, FrameDeltaTime);
 }
