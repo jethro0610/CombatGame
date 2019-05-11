@@ -14,6 +14,11 @@ void UVelocityMovementComponent::BeginPlay()
 	previousPosition = GetOwner()->GetActorLocation();
 	currentPosition = GetOwner()->GetActorLocation();
 	interpolatedPosition = GetOwner()->GetActorLocation();
+
+	bShouldMoveInAir = bMoveInAir;
+
+	acceleration = maxGroundSpeed * friction;
+	aerialAcceleration = maxAirSpeed * aerialFriction;
 }
 
 void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
@@ -46,7 +51,7 @@ void UVelocityMovementComponent::CalculateMovement() {
 	substepTime = GetWorld()->TimeSeconds;
 	if (IsOnGround()) {
 		if (!bInHitstun) {
-			AddVelocity(walkVector);
+			AddVelocity(walkVector * acceleration);
 			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
 		}
 		else {
@@ -64,27 +69,22 @@ void UVelocityMovementComponent::CalculateMovement() {
 		}
 	}
 	else {
-		if (bFrictionInAir)
-			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
+		if (!bInHitstun && CanMoveInAir()) {
+			AddVelocity(walkVector * aerialAcceleration);
+			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - aerialFriction));
+		}
 
 		if (bGravityEnabled)
 			AddGravity(gravitySpeed);
 
 		if (bInHitstun) {
-			bool verticalStunOver = true;
-			bool horizontalStunOver = true;
 			if (GetGravity() < -currentVerticalKnockback / (knockbackResistance / 1.5f)) {
 				SetGravity(GetGravity() / (1.0f + (knockbackResistance / 100.0f)));
-				verticalStunOver = false;
 			}
 
 			if (GetVelocityNoGravity().Size() > currentHorizontalKnockback / (knockbackResistance / 4.0f)) {
 				SetVelocityNoGravity(GetVelocityNoGravity() / (1.0f + (knockbackResistance / 100.0f)));
-				horizontalStunOver = false;
 			}
-
-			if (verticalStunOver && horizontalStunOver && GetGravity() > 0.0f)
-				bInHitstun = false;
 		}
 
 		if (bIsJumping) {
@@ -182,6 +182,14 @@ void UVelocityMovementComponent::SetGravity(float newGravity) {
 	velocity = FVector(velocity.X, velocity.Y, updatedGravity);
 }
 
+bool UVelocityMovementComponent::CanMoveInAir() {
+	return bMoveInAir && bShouldMoveInAir;
+}
+
+void UVelocityMovementComponent::SetMoveInAir(bool moveInAir) {
+	bShouldMoveInAir = moveInAir;
+}
+
 void UVelocityMovementComponent::ApplyHitlag(float secondsOfHitlag) {
 	currentHitlag = secondsOfHitlag;
 }
@@ -195,16 +203,10 @@ FVector UVelocityMovementComponent::GetInterpolatedPosition() {
 }
 
 void UVelocityMovementComponent::Walk(FVector walkDirection, float walkSpeed) {
-	float DeltaSeconds = GetWorld()->DeltaTimeSeconds * 60.0f;
 	FVector oneWalkDirection = walkDirection.GetClampedToMaxSize(1.0f);
-	if (IsOnGround() || bCanWalkInAir) {
-		walkVector = oneWalkDirection * walkSpeed * acceleration;
-		if (walkVector.Size() < 0.1f)
-			walkVector == FVector::ZeroVector;
-	}
-	else {
-		walkVector = FVector::ZeroVector;
-	}
+	walkVector = oneWalkDirection * walkSpeed;
+	if (walkVector.Size() < 0.1f)
+		walkVector == FVector::ZeroVector;
 }
 
 void UVelocityMovementComponent::Move(FVector deltaVector) {

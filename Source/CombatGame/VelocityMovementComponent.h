@@ -22,9 +22,15 @@ private:
 	UPROPERTY(EditAnywhere)
 		float groundDistance = 5.0f;
 	UPROPERTY(EditAnywhere)
+		float maxGroundSpeed = 7.0f;
+	UPROPERTY(EditAnywhere)
 		float friction = 0.15f;
 	UPROPERTY(EditAnywhere)
-		float acceleration = 1.0f;
+		bool bMoveInAir;
+	UPROPERTY(EditAnywhere)
+		float maxAirSpeed = 7.0f;
+	UPROPERTY(EditAnywhere)
+		float aerialFriction = 0.025f;
 	UPROPERTY(EditAnywhere)
 		float gravitySpeed = 0.07f;
 	UPROPERTY(EditAnywhere)
@@ -41,6 +47,10 @@ private:
 		float extraKnockbackAirtime = 5.0f;
 	UPROPERTY(EditAnywhere)
 		float speedInHitlag = 0.075f;
+
+	float acceleration;
+	float aerialAcceleration;
+	bool bShouldMoveInAir;
 
 	float substepTime = 0.0f;
 	float substepTickRate = 144.0f;
@@ -75,10 +85,6 @@ public:
 		FLeaveGroundDelegate OnLeaveGround;
 
 	UPROPERTY(EditAnywhere)
-		bool bCanWalkInAir = false;
-	UPROPERTY(EditAnywhere)
-		bool bFrictionInAir = false;
-	UPROPERTY(EditAnywhere)
 		bool bGravityEnabled = true;
 
 	UFUNCTION(BlueprintCallable)
@@ -110,6 +116,10 @@ public:
 		void AddGravity(float deltaGravity);
 	UFUNCTION(BlueprintCallable)
 		void SetGravity(float newGravity);
+	UFUNCTION(BlueprintCallable)
+		bool CanMoveInAir();
+	UFUNCTION(BlueprintCallable)
+		void SetMoveInAir(bool moveInAir);
 	UFUNCTION(BlueprintCallable)
 		void ApplyHitlag(float secondsOfHitlag);
 	UFUNCTION(BlueprintCallable)

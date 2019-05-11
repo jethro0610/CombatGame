@@ -44,6 +44,8 @@ void APlayerPawn::Tick(float DeltaTime) {
 		}
 	}
 
+	GetMovement()->SetMoveInAir(!IsAttacking());
+
 	cameraSpringArm->SetWorldLocation(movementComponent->GetInterpolatedPosition());
 	currentTarget = GetNearestCombatPawn();
 }
