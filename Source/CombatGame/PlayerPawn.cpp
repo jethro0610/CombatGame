@@ -35,8 +35,11 @@ void APlayerPawn::Tick(float DeltaTime) {
 
 	if (!IsAttacking() && cameraSpringArm != nullptr) {
 		if (moveYInput != 0.0f || moveXInput != 0.0f) {
-			FVector forwardWalkDirection = moveYInput * camera->GetForwardVector();
-			FVector rightWalkDirection = moveXInput * camera->GetRightVector();
+			FVector cameraForwardVector = FRotator(0.0f, camera->GetComponentRotation().Yaw, 0.0f).Vector();
+			FVector cameraRightVector = FRotator(0.0f, camera->GetComponentRotation().Yaw + 90.0f, 0.0f).Vector();
+
+			FVector forwardWalkDirection = moveYInput * cameraForwardVector;
+			FVector rightWalkDirection = moveXInput * cameraRightVector;
 			FVector walkDirection = forwardWalkDirection + rightWalkDirection;
 			walkDirection = FVector(walkDirection.X, walkDirection.Y, 0.0f);
 			GetMovement()->Walk(walkDirection, walkDirection.Size());
