@@ -42,7 +42,7 @@ void APlayerPawn::Tick(float DeltaTime) {
 			FVector rightWalkDirection = moveXInput * cameraRightVector;
 			FVector walkDirection = forwardWalkDirection + rightWalkDirection;
 			walkDirection = FVector(walkDirection.X, walkDirection.Y, 0.0f);
-			GetMovement()->Walk(walkDirection, walkDirection.Size());
+			GetMovement()->Walk(walkDirection, FMath::Min(walkDirection.Size(), 1.0f));
 			SetActorRotation(walkDirection.ToOrientationRotator());
 		}
 	}
