@@ -43,7 +43,16 @@ void APlayerPawn::Tick(float DeltaTime) {
 			FVector walkDirection = forwardWalkDirection + rightWalkDirection;
 			walkDirection = FVector(walkDirection.X, walkDirection.Y, 0.0f);
 			GetMovement()->Walk(walkDirection, FMath::Min(walkDirection.Size(), 1.0f));
-			SetActorRotation(walkDirection.ToOrientationRotator());
+			
+			FVector directionVector;
+			if (GetMovement()->IsOnGround()) {
+				directionVector = walkDirection;
+			}
+			else {
+				directionVector = GetMovement()->GetVelocityNoGravity();
+			}
+			FRotator lerpRotator = FQuat::Slerp(GetActorRotation().Quaternion(), directionVector.ToOrientationQuat(), 1.0f - FMath::Exp(-12.0f * DeltaTime)).Rotator();
+			SetActorRotation(lerpRotator);
 		}
 	}
 
