@@ -68,7 +68,9 @@ private:
 	bool bGroundedLastFrame;
 	bool bIsJumping;
 
-	FVector walkVector;
+	FVector desiredMovement;
+	FRotator desiredRotation;
+
 	FVector velocity;
 	float halfHeight;
 
@@ -129,7 +131,7 @@ public:
 		FVector GetInterpolatedPosition();
 
 	UFUNCTION(BlueprintCallable)
-		void Walk(FVector walkDirection, float walkSpeed);
+		void SetDesiredMovement(FVector moveDirection, float moveSpeed);
 
 	UFUNCTION(BlueprintCallable)
 		void Move(FVector deltaVector);

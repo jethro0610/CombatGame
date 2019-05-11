@@ -43,7 +43,7 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	for (int i = 0; i < numberOfTicks; i++) {
 		CalculateMovement();
 	}
-	walkVector = FVector::ZeroVector;
+	desiredMovement = FVector::ZeroVector;
 	interpolatedPosition = FMath::Lerp(previousPosition, currentPosition, substepBank);
 }
 
@@ -51,7 +51,7 @@ void UVelocityMovementComponent::CalculateMovement() {
 	substepTime = GetWorld()->TimeSeconds;
 	if (IsOnGround()) {
 		if (!bInHitstun) {
-			AddVelocity(walkVector * acceleration);
+			AddVelocity(desiredMovement * acceleration);
 			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
 		}
 		else {
@@ -70,7 +70,7 @@ void UVelocityMovementComponent::CalculateMovement() {
 	}
 	else {
 		if (!bInHitstun && CanMoveInAir()) {
-			AddVelocity(walkVector * aerialAcceleration);
+			AddVelocity(desiredMovement * aerialAcceleration);
 			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - aerialFriction));
 		}
 
@@ -134,7 +134,7 @@ bool UVelocityMovementComponent::IsOnGround() {
 }
 
 bool UVelocityMovementComponent::IsWalking() {
-	return (walkVector.Size() > 0.05f);
+	return IsOnGround() && desiredMovement.Size() > 0.05f;
 }
 
 bool UVelocityMovementComponent::IsJumping() {
@@ -202,11 +202,11 @@ FVector UVelocityMovementComponent::GetInterpolatedPosition() {
 	return interpolatedPosition;
 }
 
-void UVelocityMovementComponent::Walk(FVector walkDirection, float walkSpeed) {
-	FVector oneWalkDirection = walkDirection.GetClampedToMaxSize(1.0f);
-	walkVector = oneWalkDirection * walkSpeed;
-	if (walkVector.Size() < 0.1f)
-		walkVector == FVector::ZeroVector;
+void UVelocityMovementComponent::SetDesiredMovement(FVector movementDirection, float movementSpeed) {
+	FVector oneMovementDirection = movementDirection.GetClampedToMaxSize(1.0f);
+	desiredMovement = oneMovementDirection * movementSpeed;
+	if (desiredMovement.Size() < 0.1f)
+		desiredMovement == FVector::ZeroVector;
 }
 
 void UVelocityMovementComponent::Move(FVector deltaVector) {

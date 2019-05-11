@@ -38,15 +38,15 @@ void APlayerPawn::Tick(float DeltaTime) {
 			FVector cameraForwardVector = FRotator(0.0f, camera->GetComponentRotation().Yaw, 0.0f).Vector();
 			FVector cameraRightVector = FRotator(0.0f, camera->GetComponentRotation().Yaw + 90.0f, 0.0f).Vector();
 
-			FVector forwardWalkDirection = moveYInput * cameraForwardVector;
-			FVector rightWalkDirection = moveXInput * cameraRightVector;
-			FVector walkDirection = forwardWalkDirection + rightWalkDirection;
-			walkDirection = FVector(walkDirection.X, walkDirection.Y, 0.0f);
-			GetMovement()->Walk(walkDirection, FMath::Min(walkDirection.Size(), 1.0f));
+			FVector forwardMoveDirection = moveYInput * cameraForwardVector;
+			FVector rightMoveDirection = moveXInput * cameraRightVector;
+			FVector moveDirection = forwardMoveDirection + rightMoveDirection;
+			moveDirection = FVector(moveDirection.X, moveDirection.Y, 0.0f);
+			GetMovement()->SetDesiredMovement(moveDirection, FMath::Min(moveDirection.Size(), 1.0f));
 			
 			FVector directionVector;
 			if (GetMovement()->IsOnGround()) {
-				directionVector = walkDirection;
+				directionVector = moveDirection;
 			}
 			else {
 				directionVector = GetMovement()->GetVelocityNoGravity();
