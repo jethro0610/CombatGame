@@ -51,8 +51,7 @@ void APlayerPawn::Tick(float DeltaTime) {
 			else {
 				directionVector = GetMovement()->GetVelocityNoGravity();
 			}
-			FRotator lerpRotator = FQuat::Slerp(GetActorRotation().Quaternion(), directionVector.ToOrientationQuat(), 1.0f - FMath::Exp(-12.0f * DeltaTime)).Rotator();
-			SetActorRotation(lerpRotator);
+			GetMovement()->SetDesiredRotation(directionVector.Rotation());
 		}
 	}
 

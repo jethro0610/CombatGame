@@ -20,6 +20,8 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere)
+		float rotationSpeed = 0.085f;
+	UPROPERTY(EditAnywhere)
 		float groundDistance = 5.0f;
 	UPROPERTY(EditAnywhere)
 		float maxGroundSpeed = 7.0f;
@@ -132,6 +134,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void SetDesiredMovement(FVector moveDirection, float moveSpeed);
+
+	UFUNCTION(BlueprintCallable)
+		void SetDesiredRotation(FRotator newRotation);
 
 	UFUNCTION(BlueprintCallable)
 		void Move(FVector deltaVector);

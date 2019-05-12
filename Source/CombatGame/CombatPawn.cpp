@@ -56,6 +56,16 @@ void ACombatPawn::Tick(float DeltaTime)
 	skeletalMesh->SetWorldLocation(movementComponent->GetInterpolatedPosition() + modelOffset);
 }
 
+bool ACombatPawn::SetActorRotation(FRotator NewRotatation) {
+	GetMovement()->SetDesiredRotation(NewRotatation);
+	return Super::SetActorRotation(NewRotatation);
+}
+
+bool ACombatPawn::SetActorRotation(FRotator NewRotatation, ETeleportType Teleport) {
+	GetMovement()->SetDesiredRotation(NewRotatation);
+	return Super::SetActorRotation(NewRotatation, Teleport);
+}
+
 void ACombatPawn::HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult) {
 	if (bRecieveKnockback) {
 		movementComponent->ApplyKnockback(combatComponent->GetKnockbackVector(hitCollider, attackingCollider));

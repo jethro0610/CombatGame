@@ -101,6 +101,9 @@ void UVelocityMovementComponent::CalculateMovement() {
 			OnLeaveGround.Broadcast();
 		}
 	}
+
+	FRotator lerpRotation = FQuat::Slerp(GetOwner()->GetActorRotation().Quaternion(), desiredRotation.Quaternion(), rotationSpeed).Rotator();
+	GetOwner()->SetActorRotation(lerpRotation);
 	Move(velocity);
 
 	previousPosition = currentPosition;
@@ -207,6 +210,10 @@ void UVelocityMovementComponent::SetDesiredMovement(FVector movementDirection, f
 	desiredMovement = oneMovementDirection * movementSpeed;
 	if (desiredMovement.Size() < 0.1f)
 		desiredMovement == FVector::ZeroVector;
+}
+
+void UVelocityMovementComponent::SetDesiredRotation(FRotator newRotation) {
+	desiredRotation = newRotation;
 }
 
 void UVelocityMovementComponent::Move(FVector deltaVector) {
