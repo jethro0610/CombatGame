@@ -152,6 +152,7 @@ void APlayerPawn::InputCameraX(float axisValue) {
 
 void APlayerPawn::InputCameraY(float axisValue) {
 	cameraPitch += axisValue * 120.0f * GetWorld()->DeltaTimeSeconds;
+	cameraPitch = FMath::Clamp(cameraPitch, -89.0f, 89.0f);
 }
 
 void APlayerPawn::InputJump() {
