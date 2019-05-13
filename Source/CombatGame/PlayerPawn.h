@@ -63,6 +63,9 @@ private:
 	float moveXInput;
 	float moveYInput;
 
+	float cameraYaw;
+	float cameraPitch;
+
 public:
 	UFUNCTION(BlueprintCallable)
 		FAttackGroup GetAttackGroupFromName(FName attackGroupName);

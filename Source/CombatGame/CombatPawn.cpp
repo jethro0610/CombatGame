@@ -25,6 +25,9 @@ void ACombatPawn::OnConstruction(const FTransform &Transform) {
 void ACombatPawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetMovement()->SetDesiredRotation(GetActorRotation());
+
 	combatComponent->OnHitByAttack.AddDynamic(this, &ACombatPawn::HitByAttack);
 	combatComponent->OnLandAttack.AddDynamic(this, &ACombatPawn::LandAttack);
 	movementComponent->SetHalfHeight(collisionCapsule->GetScaledCapsuleHalfHeight());
@@ -56,14 +59,9 @@ void ACombatPawn::Tick(float DeltaTime)
 	skeletalMesh->SetWorldLocation(movementComponent->GetInterpolatedPosition() + modelOffset);
 }
 
-bool ACombatPawn::SetActorRotation(FRotator NewRotatation) {
-	GetMovement()->SetDesiredRotation(NewRotatation);
-	return Super::SetActorRotation(NewRotatation);
-}
-
-bool ACombatPawn::SetActorRotation(FRotator NewRotatation, ETeleportType Teleport) {
-	GetMovement()->SetDesiredRotation(NewRotatation);
-	return Super::SetActorRotation(NewRotatation, Teleport);
+bool ACombatPawn::SetActorRotation(FRotator newRotator, ETeleportType teleportType) {
+	movementComponent->SetDesiredRotation(newRotator);
+	return Super::SetActorRotation(newRotator, teleportType);
 }
 
 void ACombatPawn::HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult) {

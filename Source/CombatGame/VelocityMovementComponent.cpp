@@ -101,10 +101,12 @@ void UVelocityMovementComponent::CalculateMovement() {
 			OnLeaveGround.Broadcast();
 		}
 	}
-
-	FRotator lerpRotation = FQuat::Slerp(GetOwner()->GetActorRotation().Quaternion(), desiredRotation.Quaternion(), rotationSpeed).Rotator();
-	GetOwner()->SetActorRotation(lerpRotation);
 	Move(velocity);
+
+	FRotator currentDesiredRotation = desiredRotation;
+	FRotator lerpRotation = FQuat::Slerp(GetOwner()->GetActorRotation().Quaternion(), desiredRotation.Quaternion(), 1.0f - FMath::Exp(-rotationSpeed)).Rotator();
+	GetOwner()->SetActorRotation(lerpRotation);
+	desiredRotation = currentDesiredRotation;
 
 	previousPosition = currentPosition;
 	currentPosition = GetOwner()->GetActorLocation();

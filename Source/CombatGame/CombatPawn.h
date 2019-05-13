@@ -24,8 +24,7 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
-	bool SetActorRotation(FRotator NewRotation);
-	bool SetActorRotation(FRotator NewRotatation, ETeleportType Teleport);
+	bool SetActorRotation(FRotator newRotator, ETeleportType teleportType = ETeleportType::None);
 
 public:
 	UPROPERTY(BlueprintAssignable)

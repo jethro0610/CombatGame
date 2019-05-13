@@ -17,7 +17,9 @@ APlayerPawn::APlayerPawn() {
 	cameraSpringArm->bInheritPitch = false;
 	cameraSpringArm->bInheritRoll = false;
 	cameraSpringArm->bAbsoluteRotation = true;
-	cameraSpringArm->AttachTo(RootComponent);
+	cameraSpringArm->SetWorldRotation(FRotator(0.0f, 0.0f, 0.0f));	// These three are needed to keep the camera
+	cameraYaw = cameraSpringArm->GetComponentRotation().Yaw;		// spring arm rotated in the editor, otherwise
+	cameraPitch = cameraSpringArm->GetComponentRotation().Pitch;	// it stays on the same world rotation.
 
 	camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	camera->AttachTo(cameraSpringArm);
@@ -26,6 +28,9 @@ APlayerPawn::APlayerPawn() {
 void APlayerPawn::BeginPlay() {
 	Super::BeginPlay();
 
+	cameraYaw = cameraSpringArm->GetComponentRotation().Yaw;
+	cameraPitch = cameraSpringArm->GetComponentRotation().Pitch;
+
 	GetMovement()->OnEnterGround.AddDynamic(this, &APlayerPawn::PlayerEnterGround);
 	GetMovement()->OnLeaveGround.AddDynamic(this, &APlayerPawn::PlayerLeaveGround);
 }
@@ -33,10 +38,13 @@ void APlayerPawn::BeginPlay() {
 void APlayerPawn::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
+	cameraSpringArm->SetRelativeRotation(FRotator(cameraPitch, cameraYaw, 0.0f));
+	cameraSpringArm->SetWorldLocation(movementComponent->GetInterpolatedPosition());
+
 	if (!IsAttacking() && cameraSpringArm != nullptr) {
 		if (moveYInput != 0.0f || moveXInput != 0.0f) {
-			FVector cameraForwardVector = FRotator(0.0f, camera->GetComponentRotation().Yaw, 0.0f).Vector();
-			FVector cameraRightVector = FRotator(0.0f, camera->GetComponentRotation().Yaw + 90.0f, 0.0f).Vector();
+			FVector cameraForwardVector = FRotator(0.0f, cameraYaw, 0.0f).Vector();			// Yaw value must be taken from variable because the
+			FVector cameraRightVector = FRotator(0.0f, cameraYaw + 90.0f, 0.0f).Vector();	// GetComponentRotation yaw value is affected by parent rotation
 
 			FVector forwardMoveDirection = moveYInput * cameraForwardVector;
 			FVector rightMoveDirection = moveXInput * cameraRightVector;
@@ -54,10 +62,8 @@ void APlayerPawn::Tick(float DeltaTime) {
 			GetMovement()->SetDesiredRotation(directionVector.Rotation());
 		}
 	}
-
 	GetMovement()->SetMoveInAir(!IsAttacking());
 
-	cameraSpringArm->SetWorldLocation(movementComponent->GetInterpolatedPosition());
 	currentTarget = GetNearestCombatPawn();
 }
 
@@ -141,16 +147,11 @@ void APlayerPawn::InputMoveY(float axisValue) {
 }
 
 void APlayerPawn::InputCameraX(float axisValue) {
-	float newCameraXRotation = cameraSpringArm->GetComponentRotation().Yaw + (axisValue * 120.0f * GetWorld()->DeltaTimeSeconds);
-	FRotator newCameraRotation = FRotator(cameraSpringArm->GetComponentRotation().Pitch, newCameraXRotation, 0.0f);
-	cameraSpringArm->SetWorldRotation(newCameraRotation);
+	cameraYaw += axisValue * 120.0f * GetWorld()->DeltaTimeSeconds;
 }
 
 void APlayerPawn::InputCameraY(float axisValue) {
-	float newCameraYRotation = cameraSpringArm->GetComponentRotation().Pitch + (axisValue * 120.0f * GetWorld()->DeltaTimeSeconds);
-	newCameraYRotation = FMath::Clamp(newCameraYRotation, -89.0f, 89.0f);
-	FRotator newCameraRotation = FRotator(newCameraYRotation, cameraSpringArm->GetComponentRotation().Yaw, 0.0f);
-	cameraSpringArm->SetWorldRotation(newCameraRotation);
+	cameraPitch += axisValue * 120.0f * GetWorld()->DeltaTimeSeconds;
 }
 
 void APlayerPawn::InputJump() {
