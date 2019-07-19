@@ -66,6 +66,8 @@ private:
 	float cameraYaw;
 	float cameraPitch;
 
+	bool bPhotoMode;
+
 public:
 	UFUNCTION(BlueprintCallable)
 		FAttackGroup GetAttackGroupFromName(FName attackGroupName);
@@ -82,6 +84,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		ACombatPawn* GetNearestCombatPawn();
 
+	UFUNCTION(BlueprintCallable)
+		void TogglePhotoMode(bool onOff);
+
 private:
 	void InputMoveX(float axisValue);
 	void InputMoveY(float axisValue);
@@ -90,6 +95,8 @@ private:
 	void InputJump();
 	void InputReleaseJump();
 	void InputAttack();
+	void InputEnablePhotoMode();
+	void InputDisablePhotoMode();
 
 	UFUNCTION()
 		void PlayerEnterGround();

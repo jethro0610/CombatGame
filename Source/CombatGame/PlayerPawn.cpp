@@ -2,6 +2,7 @@
 #include "EngineUtils.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/InputComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 APlayerPawn::APlayerPawn() {
 	FAttackGroup groundAttacks;
@@ -42,7 +43,33 @@ void APlayerPawn::Tick(float DeltaTime) {
 	cameraSpringArm->SetWorldLocation(movementComponent->GetInterpolatedPosition());
 
 	if (!IsAttacking() && cameraSpringArm != nullptr) {
-		if (moveYInput != 0.0f || moveXInput != 0.0f) {
+		if (!bPhotoMode) {
+			if (moveYInput != 0.0f || moveXInput != 0.0f) {
+				FVector cameraForwardVector = FRotator(0.0f, cameraYaw, 0.0f).Vector();			// Yaw value must be taken from variable because the
+				FVector cameraRightVector = FRotator(0.0f, cameraYaw + 90.0f, 0.0f).Vector();	// GetComponentRotation yaw value is affected by parent rotation
+
+				FVector forwardMoveDirection = moveYInput * cameraForwardVector;
+				FVector rightMoveDirection = moveXInput * cameraRightVector;
+				FVector moveDirection = forwardMoveDirection + rightMoveDirection;
+				moveDirection = FVector(moveDirection.X, moveDirection.Y, 0.0f);
+				GetMovement()->SetDesiredMovement(moveDirection, FMath::Min(moveDirection.Size(), 1.0f));
+
+				FVector directionVector;
+				if (GetMovement()->IsOnGround()) {
+					directionVector = moveDirection;
+				}
+				else {
+					directionVector = GetMovement()->GetVelocityNoGravity();
+				}
+				GetMovement()->SetDesiredRotation(directionVector.Rotation());
+			}
+		}
+		else {
+			camera->SetWorldLocation(movementComponent->GetInterpolatedPosition());
+			SetActorRotation(FRotator(0.0f, cameraYaw, 0.0f));
+			GetMovement()->SetDesiredRotation(FRotator(0.0f, cameraYaw, 0.0f));
+			camera->SetRelativeRotation(FRotator(cameraPitch, 0.0f, 0.0f));
+
 			FVector cameraForwardVector = FRotator(0.0f, cameraYaw, 0.0f).Vector();			// Yaw value must be taken from variable because the
 			FVector cameraRightVector = FRotator(0.0f, cameraYaw + 90.0f, 0.0f).Vector();	// GetComponentRotation yaw value is affected by parent rotation
 
@@ -51,15 +78,6 @@ void APlayerPawn::Tick(float DeltaTime) {
 			FVector moveDirection = forwardMoveDirection + rightMoveDirection;
 			moveDirection = FVector(moveDirection.X, moveDirection.Y, 0.0f);
 			GetMovement()->SetDesiredMovement(moveDirection, FMath::Min(moveDirection.Size(), 1.0f));
-			
-			FVector directionVector;
-			if (GetMovement()->IsOnGround()) {
-				directionVector = moveDirection;
-			}
-			else {
-				directionVector = GetMovement()->GetVelocityNoGravity();
-			}
-			GetMovement()->SetDesiredRotation(directionVector.Rotation());
 		}
 	}
 	GetMovement()->SetMoveInAir(!IsAttacking());
@@ -125,6 +143,22 @@ ACombatPawn* APlayerPawn::GetNearestCombatPawn() {
 	return returnPawn;
 }
 
+void APlayerPawn::TogglePhotoMode(bool onOff) {
+	if (bPhotoMode != onOff && !IsAttacking()) {
+		bPhotoMode = onOff;
+		cameraPitch = 0.0f;
+		if (bPhotoMode) {
+			camera->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+			skeletalMesh->SetVisibility(false);
+		}
+		else {
+			camera->AttachTo(cameraSpringArm);
+			camera->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+			skeletalMesh->SetVisibility(true);
+		}
+	}
+}
+
 void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -136,6 +170,8 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &APlayerPawn::InputJump);
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &APlayerPawn::InputReleaseJump);
 	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerPawn::InputAttack);
+	PlayerInputComponent->BindAction("TogglePhotoMode", EInputEvent::IE_Pressed, this, &APlayerPawn::InputEnablePhotoMode);
+	PlayerInputComponent->BindAction("TogglePhotoMode", EInputEvent::IE_Released, this, &APlayerPawn::InputDisablePhotoMode);
 }
 
 void APlayerPawn::InputMoveX(float axisValue) {
@@ -166,20 +202,30 @@ void APlayerPawn::InputReleaseJump() {
 }
 
 void APlayerPawn::InputAttack() {
-	if (currentTarget != nullptr) {
-		if (!IsAttacking() || bCanCombo) {
-			if (FVector::Dist(GetActorLocation(), currentTarget->GetActorLocation()) < maxTargetDistance) {
-				FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), currentTarget->GetActorLocation() + (currentTarget->GetMovement()->GetVelocity() * 5.0f));
-				SetActorRotation(FRotator(0.0f, lookAtRotation.Yaw, 0.0f));
+	if (!bPhotoMode) {
+		if (currentTarget != nullptr) {
+			if (!IsAttacking() || bCanCombo) {
+				if (FVector::Dist(GetActorLocation(), currentTarget->GetActorLocation()) < maxTargetDistance) {
+					FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), currentTarget->GetActorLocation() + (currentTarget->GetMovement()->GetVelocity() * 5.0f));
+					SetActorRotation(FRotator(0.0f, lookAtRotation.Yaw, 0.0f));
+				}
 			}
 		}
+		if (GetMovement()->IsOnGround()) {
+			DoAttackFromGroup("Ground Attacks");
+		}
+		else {
+			DoAttackFromGroup("Air Attacks");
+		}
 	}
-	if (GetMovement()->IsOnGround()) {
-		DoAttackFromGroup("Ground Attacks");
-	}
-	else {
-		DoAttackFromGroup("Air Attacks");
-	}
+}
+
+void APlayerPawn::InputEnablePhotoMode() {
+	TogglePhotoMode(true);
+}
+
+void APlayerPawn::InputDisablePhotoMode() {
+	TogglePhotoMode(false);
 }
 
 void APlayerPawn::PlayerEnterGround() {
