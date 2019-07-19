@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "PhotoTargetComponent.h"
+#include "Engine/Texture2D.h"
+#include "ImageWrapper/Public/IImageWrapper.h"
+#include "ImageWrapper/Public/IImageWrapperModule.h"
 #include "PhotoComponent.generated.h"
 
 
@@ -29,4 +32,10 @@ public:
 
 public:
 	void TakePhoto();
+	TSharedPtr<IImageWrapper> ImageWrapper;
+
+	UTexture2D* imageTexture;
+
+	UFUNCTION(BlueprintCallable)
+		UTexture2D* GetImageTexture();
 };

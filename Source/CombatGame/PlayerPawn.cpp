@@ -161,6 +161,10 @@ void APlayerPawn::TogglePhotoMode(bool onOff) {
 	}
 }
 
+UPhotoComponent* APlayerPawn::GetPhotoComponent() {
+	return photoComponent;
+}
+
 void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

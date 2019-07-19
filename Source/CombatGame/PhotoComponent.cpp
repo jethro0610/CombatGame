@@ -16,6 +16,8 @@ UPhotoComponent::UPhotoComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	IImageWrapperModule &ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"));
+	ImageWrapper = ImageWrapperModule.CreateImageWrapper(EImageFormat::PNG);
 }
 
 
@@ -24,8 +26,12 @@ void UPhotoComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	FViewport* viewport = GEngine->GameViewport->Viewport;
+	int32 width = viewport->GetSizeXY().X;
+	int32 height = viewport->GetSizeXY().Y;
+
+	imageTexture = UTexture2D::CreateTransient(width, height, PF_B8G8R8A8);
+	imageTexture->MipGenSettings = TMGS_NoMipmaps;
 }
 
 
@@ -46,8 +52,14 @@ void UPhotoComponent::TakePhoto() {
 		int32 width = viewport->GetSizeXY().X;
 		int32 height = viewport->GetSizeXY().Y;
 		FImageUtils::CompressImageArray(width, height, uncompressedImage, pngArray);
-		FString filePath = "C:/Users/Jethro/Test/image.png";
-		FFileHelper::SaveArrayToFile(pngArray, *filePath);
+
+		ImageWrapper->SetCompressed(pngArray.GetData(), pngArray.Num());
+		const TArray<uint8>* decompressedImage = NULL;
+		ImageWrapper->GetRaw(ERGBFormat::BGRA, 8, decompressedImage);
+		void* TextureData = imageTexture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+		FMemory::Memcpy(TextureData, decompressedImage->GetData(), decompressedImage->Num());
+		imageTexture->PlatformData->Mips[0].BulkData.Unlock();
+		imageTexture->UpdateResource();
 	}
 }
 
@@ -60,5 +72,9 @@ TArray<TWeakObjectPtr<UPhotoTargetComponent>> UPhotoComponent::GetTargetsInView(
 		}
 	}
 	return photoTargets;
+}
+
+UTexture2D* UPhotoComponent::GetImageTexture() {
+	return imageTexture;
 }
 

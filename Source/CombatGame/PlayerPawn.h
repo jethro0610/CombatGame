@@ -91,6 +91,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void TogglePhotoMode(bool onOff);
 
+	UFUNCTION(BlueprintCallable)
+		UPhotoComponent* GetPhotoComponent();
+
 private:
 	void InputMoveX(float axisValue);
 	void InputMoveY(float axisValue);
