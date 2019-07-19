@@ -3,7 +3,10 @@
 
 #include "PhotoComponent.h"
 #include "UObjectIterator.h"
+#include "UnrealClient.h"
+#include "Engine.h"
 #include "GameFramework/Actor.h"
+#include "ImageUtils.h"
 
 // Sets default values for this component's properties
 UPhotoComponent::UPhotoComponent()
@@ -32,6 +35,20 @@ void UPhotoComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UPhotoComponent::TakePhoto() {
+	TArray<FColor> uncompressedImage;
+	FViewport* viewport = GEngine->GameViewport->Viewport;
+	bool screenshotSuccesful = GetViewportScreenShot(viewport, uncompressedImage);
+	if (screenshotSuccesful) {
+		TArray<uint8> pngArray;
+		int32 width = viewport->GetSizeXY().X;
+		int32 height = viewport->GetSizeXY().Y;
+		FImageUtils::CompressImageArray(width, height, uncompressedImage, pngArray);
+		FString filePath = "C:/Users/Jethro/Test/image.png";
+		FFileHelper::SaveArrayToFile(pngArray, *filePath);
+	}
 }
 
 TArray<TWeakObjectPtr<UPhotoTargetComponent>> UPhotoComponent::GetTargetsInView() {

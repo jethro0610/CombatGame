@@ -4,6 +4,7 @@
 #include "CombatPawn.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "PhotoComponent.h"
 #include "PlayerPawn.generated.h"
 
 USTRUCT(BlueprintType)
@@ -33,6 +34,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(VisibleAnywhere)
+		UPhotoComponent* photoComponent;
+
 	UPROPERTY(VisibleAnywhere)
 		USpringArmComponent* cameraSpringArm;
 
@@ -97,6 +101,7 @@ private:
 	void InputAttack();
 	void InputEnablePhotoMode();
 	void InputDisablePhotoMode();
+	void InputTakePhoto();
 
 	UFUNCTION()
 		void PlayerEnterGround();

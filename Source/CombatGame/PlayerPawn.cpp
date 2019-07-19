@@ -13,6 +13,8 @@ APlayerPawn::APlayerPawn() {
 	airAttacks.attackGroupName = FName("Air Attacks");
 	attackGroups.Add(airAttacks);
 
+	photoComponent = CreateDefaultSubobject<UPhotoComponent>("Photo Component");
+
 	cameraSpringArm = CreateDefaultSubobject<USpringArmComponent>("Spring Arm");
 	cameraSpringArm->bInheritYaw = false;
 	cameraSpringArm->bInheritPitch = false;
@@ -172,6 +174,7 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerPawn::InputAttack);
 	PlayerInputComponent->BindAction("TogglePhotoMode", EInputEvent::IE_Pressed, this, &APlayerPawn::InputEnablePhotoMode);
 	PlayerInputComponent->BindAction("TogglePhotoMode", EInputEvent::IE_Released, this, &APlayerPawn::InputDisablePhotoMode);
+	PlayerInputComponent->BindAction("TakePhoto", EInputEvent::IE_Pressed, this, &APlayerPawn::InputTakePhoto);
 }
 
 void APlayerPawn::InputMoveX(float axisValue) {
@@ -226,6 +229,10 @@ void APlayerPawn::InputEnablePhotoMode() {
 
 void APlayerPawn::InputDisablePhotoMode() {
 	TogglePhotoMode(false);
+}
+
+void APlayerPawn::InputTakePhoto() {
+	photoComponent->TakePhoto();
 }
 
 void APlayerPawn::PlayerEnterGround() {

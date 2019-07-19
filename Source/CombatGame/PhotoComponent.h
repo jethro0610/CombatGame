@@ -26,4 +26,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	TArray<TWeakObjectPtr<UPhotoTargetComponent>> GetTargetsInView();
+
+public:
+	void TakePhoto();
 };
