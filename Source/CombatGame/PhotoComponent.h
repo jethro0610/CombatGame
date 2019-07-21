@@ -6,8 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PhotoTargetComponent.h"
 #include "Engine/Texture2D.h"
-#include "ImageWrapper/Public/IImageWrapper.h"
-#include "ImageWrapper/Public/IImageWrapperModule.h"
+#include "Photograph.h"
 #include "PhotoComponent.generated.h"
 
 
@@ -30,12 +29,14 @@ public:
 
 	TArray<TWeakObjectPtr<UPhotoTargetComponent>> GetTargetsInView();
 
-public:
-	void TakePhoto();
-	TSharedPtr<IImageWrapper> ImageWrapper;
+private:
+	UPROPERTY()	
+		TArray <UPhotograph*> photographs;
 
-	UTexture2D* imageTexture;
+public:
+	UFUNCTION(BlueprintCallable)
+		void TakePhoto();
 
 	UFUNCTION(BlueprintCallable)
-		UTexture2D* GetImageTexture();
+		UPhotograph* GetPhotograph();
 };
