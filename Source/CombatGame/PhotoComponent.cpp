@@ -3,10 +3,8 @@
 
 #include "PhotoComponent.h"
 #include "UObjectIterator.h"
-#include "UnrealClient.h"
 #include "Engine.h"
 #include "GameFramework/Actor.h"
-#include "ImageUtils.h"
 
 // Sets default values for this component's properties
 UPhotoComponent::UPhotoComponent()
@@ -42,9 +40,9 @@ void UPhotoComponent::TakePhoto() {
 		UPhotograph* newPhotograph;
 		newPhotograph = NewObject<UPhotograph>(GetOwner());
 		newPhotograph->UpdateImage(viewport->GetSizeXY().X, viewport->GetSizeXY().Y, rawImage);
-
 		photographs.Add(newPhotograph);
 	}
+	OnTakePhoto.Broadcast();
 }
 
 TArray<TWeakObjectPtr<UPhotoTargetComponent>> UPhotoComponent::GetTargetsInView() {

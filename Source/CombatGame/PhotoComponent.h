@@ -9,7 +9,7 @@
 #include "Photograph.h"
 #include "PhotoComponent.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTakePhotoDelegate);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class COMBATGAME_API UPhotoComponent : public UActorComponent
 {
@@ -28,6 +28,9 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	TArray<TWeakObjectPtr<UPhotoTargetComponent>> GetTargetsInView();
+
+	UPROPERTY(BlueprintAssignable)
+		FTakePhotoDelegate OnTakePhoto;
 
 private:
 	UPROPERTY()	
