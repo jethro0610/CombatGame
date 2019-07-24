@@ -27,8 +27,6 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	TArray<UPhotoTargetComponent*> GetTargetsInView();
-
 	UPROPERTY(BlueprintAssignable)
 		FTakePhotoDelegate OnTakePhoto;
 
@@ -38,8 +36,14 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable)
+		bool ActorIsWithinViewport(AActor* actorToCheck);
+
+	UFUNCTION(BlueprintCallable)
+		TArray<UPhotoTargetComponent*> GetTargetsInView();
+
+	UFUNCTION(BlueprintCallable)
 		void TakePhoto();
 
 	UFUNCTION(BlueprintCallable)
-		UPhotograph* GetPhotograph();
+		TArray<UPhotograph*> GetPhotographs();
 };

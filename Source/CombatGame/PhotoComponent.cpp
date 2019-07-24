@@ -43,25 +43,38 @@ void UPhotoComponent::TakePhoto() {
 		photographs.Add(newPhotograph);
 	}
 	OnTakePhoto.Broadcast();
+	GetTargetsInView();
+}
+
+bool UPhotoComponent::ActorIsWithinViewport(AActor* actorToCheck) {
+	FViewport* viewport = GEngine->GameViewport->Viewport;
+	FVector2D location;
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->ProjectWorldLocationToScreen(actorToCheck->GetActorLocation(), location, false);
+
+	if (FMath::IsWithin(location.X, 0.0f, (float)viewport->GetSizeXY().X) && FMath::IsWithin(location.Y, 0.0f, (float)viewport->GetSizeXY().Y)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 TArray<UPhotoTargetComponent*> UPhotoComponent::GetTargetsInView() {
 	TArray<UPhotoTargetComponent*> photoTargets;
+	FViewport* viewport = GEngine->GameViewport->Viewport;
 	for (TObjectIterator<UPhotoTargetComponent> Itr; Itr; ++Itr) {
 		UPhotoTargetComponent* photoTarget = *Itr;
-		if (photoTarget->GetOwner()->GetLastRenderTime() < 0.01f) {
+
+		if (photoTarget->GetWorld() != GetWorld())
+			continue;
+		if (ActorIsWithinViewport(photoTarget->GetOwner())) {
 			photoTargets.Add(photoTarget);
 		}
 	}
 	return photoTargets;
 }
 
-UPhotograph* UPhotoComponent::GetPhotograph() {
-	if (photographs.Num() > 0) {
-		return photographs[photographs.Num() - 1];
-	}
-	else {
-		return nullptr;
-	}
+TArray<UPhotograph*> UPhotoComponent::GetPhotographs() {
+	return photographs;
 }
 
