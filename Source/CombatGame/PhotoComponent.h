@@ -27,7 +27,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	TArray<TWeakObjectPtr<UPhotoTargetComponent>> GetTargetsInView();
+	TArray<UPhotoTargetComponent*> GetTargetsInView();
 
 	UPROPERTY(BlueprintAssignable)
 		FTakePhotoDelegate OnTakePhoto;

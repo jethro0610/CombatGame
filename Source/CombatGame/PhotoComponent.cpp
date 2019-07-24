@@ -45,8 +45,8 @@ void UPhotoComponent::TakePhoto() {
 	OnTakePhoto.Broadcast();
 }
 
-TArray<TWeakObjectPtr<UPhotoTargetComponent>> UPhotoComponent::GetTargetsInView() {
-	TArray<TWeakObjectPtr<UPhotoTargetComponent>> photoTargets;
+TArray<UPhotoTargetComponent*> UPhotoComponent::GetTargetsInView() {
+	TArray<UPhotoTargetComponent*> photoTargets;
 	for (TObjectIterator<UPhotoTargetComponent> Itr; Itr; ++Itr) {
 		UPhotoTargetComponent* photoTarget = *Itr;
 		if (photoTarget->GetOwner()->GetLastRenderTime() < 0.01f) {
