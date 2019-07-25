@@ -36,6 +36,12 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable)
+		float GetActorRenderTimeDifference(AActor* actorToCheck, float currentTime);
+
+	UFUNCTION(BlueprintCallable)
+		bool ActorHasBeenRendered(AActor* actorToCheck, float currentTime);
+
+	UFUNCTION(BlueprintCallable)
 		bool ActorIsWithinViewport(AActor* actorToCheck);
 
 	UFUNCTION(BlueprintCallable)

@@ -46,6 +46,16 @@ void UPhotoComponent::TakePhoto() {
 	GetTargetsInView();
 }
 
+float UPhotoComponent::GetActorRenderTimeDifference(AActor* actorToCheck, float currentTime) {
+	float actorLastRenderTime = actorToCheck->GetLastRenderTime();
+
+	return currentTime - actorLastRenderTime;
+}
+
+bool UPhotoComponent::ActorHasBeenRendered(AActor* actorToCheck, float currentTime) {
+	return GetActorRenderTimeDifference(actorToCheck, currentTime) < 0.1f;
+}
+
 bool UPhotoComponent::ActorIsWithinViewport(AActor* actorToCheck) {
 	FViewport* viewport = GEngine->GameViewport->Viewport;
 	FVector2D location;
@@ -62,13 +72,16 @@ bool UPhotoComponent::ActorIsWithinViewport(AActor* actorToCheck) {
 TArray<UPhotoTargetComponent*> UPhotoComponent::GetTargetsInView() {
 	TArray<UPhotoTargetComponent*> photoTargets;
 	FViewport* viewport = GEngine->GameViewport->Viewport;
+	float currentTime = UGameplayStatics::GetTimeSeconds(GetWorld());
 	for (TObjectIterator<UPhotoTargetComponent> Itr; Itr; ++Itr) {
 		UPhotoTargetComponent* photoTarget = *Itr;
 
 		if (photoTarget->GetWorld() != GetWorld())
 			continue;
 		if (ActorIsWithinViewport(photoTarget->GetOwner())) {
-			photoTargets.Add(photoTarget);
+			if (ActorHasBeenRendered(photoTarget->GetOwner(), currentTime)) {
+				photoTargets.Add(photoTarget);
+			}
 		}
 	}
 	return photoTargets;
