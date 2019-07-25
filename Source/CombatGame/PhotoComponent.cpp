@@ -43,7 +43,6 @@ void UPhotoComponent::TakePhoto() {
 		photographs.Add(newPhotograph);
 	}
 	OnTakePhoto.Broadcast();
-	GetTargetsInView();
 }
 
 float UPhotoComponent::GetActorRenderTimeDifference(AActor* actorToCheck, float currentTime) {
@@ -53,16 +52,26 @@ float UPhotoComponent::GetActorRenderTimeDifference(AActor* actorToCheck, float 
 }
 
 bool UPhotoComponent::ActorHasBeenRendered(AActor* actorToCheck, float currentTime) {
-	return GetActorRenderTimeDifference(actorToCheck, currentTime) < 0.1f;
+	FCollisionQueryParams queryParams;
+	FHitResult hitResult;
+	queryParams.AddIgnoredActor(GetOwner());
+	queryParams.AddIgnoredActor(actorToCheck);
+	GetWorld()->LineTraceSingleByChannel(hitResult, GetOwner()->GetActorLocation(), actorToCheck->GetActorLocation(), ECC_MAX, queryParams);
+	return !hitResult.IsValidBlockingHit();
 }
 
 bool UPhotoComponent::ActorIsWithinViewport(AActor* actorToCheck) {
 	FViewport* viewport = GEngine->GameViewport->Viewport;
 	FVector2D location;
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->ProjectWorldLocationToScreen(actorToCheck->GetActorLocation(), location, false);
+	GetWorld()->GetFirstPlayerController()->ProjectWorldLocationToScreen(actorToCheck->GetActorLocation(), location, false);
 
-	if (FMath::IsWithin(location.X, 0.0f, (float)viewport->GetSizeXY().X) && FMath::IsWithin(location.Y, 0.0f, (float)viewport->GetSizeXY().Y)) {
-		return true;
+	if (location.X > 1.0f && location.X < viewport->GetSizeXY().X) {
+		if (location.Y > 1.0f && location.Y < viewport->GetSizeXY().Y) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	else {
 		return false;
@@ -79,6 +88,8 @@ TArray<UPhotoTargetComponent*> UPhotoComponent::GetTargetsInView() {
 		if (photoTarget->GetWorld() != GetWorld())
 			continue;
 		if (ActorIsWithinViewport(photoTarget->GetOwner())) {
+			photoTarget->GetOwner()->GetName(); // Needed or checks on same location
+
 			if (ActorHasBeenRendered(photoTarget->GetOwner(), currentTime)) {
 				photoTargets.Add(photoTarget);
 			}
