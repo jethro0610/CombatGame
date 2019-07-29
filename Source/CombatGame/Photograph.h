@@ -7,6 +7,7 @@
 #include "Engine/Texture2D.h"
 #include "ImageWrapper/Public/IImageWrapper.h"
 #include "ImageWrapper/Public/IImageWrapperModule.h"
+#include "PhotoTargetComponent.h"
 #include "Photograph.generated.h"
 
 /**
@@ -33,6 +34,8 @@ private:
 	UPROPERTY()
 		UTexture2D* image;
 
+	TArray<FPhotoTargetInfo> photoTargets;
+
 public:
 	UFUNCTION(BlueprintCallable)
 		void UpdateImage(int newWidth, int newHeight, TArray<FColor> newImage);
@@ -48,6 +51,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		TArray<uint8> GetImagePNG();
+
+	UFUNCTION(BlueprintCallable)
+		TArray<FPhotoTargetInfo> GetPhotoTargets();
+
+	UFUNCTION(BlueprintCallable)
+		void SetPhotoTargets(TArray<UPhotoTargetComponent*> newTargets);
 
 	UFUNCTION(BlueprintCallable)
 		void ExportImage(FString folder);

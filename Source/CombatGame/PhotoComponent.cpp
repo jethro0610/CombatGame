@@ -40,6 +40,7 @@ void UPhotoComponent::TakePhoto() {
 		UPhotograph* newPhotograph;
 		newPhotograph = NewObject<UPhotograph>(GetOwner());
 		newPhotograph->UpdateImage(viewport->GetSizeXY().X, viewport->GetSizeXY().Y, rawImage);
+		newPhotograph->SetPhotoTargets(GetTargetsInView());
 		photographs.Add(newPhotograph);
 	}
 	OnTakePhoto.Broadcast();

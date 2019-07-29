@@ -6,6 +6,17 @@
 #include "Components/ActorComponent.h"
 #include "PhotoTargetComponent.generated.h"
 
+USTRUCT(BlueprintType)
+struct FPhotoTargetInfo {
+	GENERATED_BODY();
+
+	UPROPERTY()
+		FName name;
+
+	UPROPERTY()
+		FColor color;
+};
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class COMBATGAME_API UPhotoTargetComponent : public UActorComponent
 {
@@ -14,4 +25,12 @@ class COMBATGAME_API UPhotoTargetComponent : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UPhotoTargetComponent();
+
+private:
+	UPROPERTY(EditAnywhere)
+		FPhotoTargetInfo targetInfo;
+
+public:
+	UFUNCTION(BlueprintCallable)
+		FPhotoTargetInfo GetTargetInfo();
 };

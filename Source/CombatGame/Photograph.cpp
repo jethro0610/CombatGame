@@ -77,6 +77,17 @@ TArray<uint8> UPhotograph::GetImagePNG() {
 	return pngArray;
 }
 
+TArray<FPhotoTargetInfo> UPhotograph::GetPhotoTargets() {
+	return photoTargets;
+}
+
+void UPhotograph::SetPhotoTargets(TArray<UPhotoTargetComponent*> newTargets) {
+	photoTargets.Empty();
+	for (int i = 0; i < newTargets.Num(); i++) {
+		photoTargets.Add(newTargets[i]->GetTargetInfo());
+	}
+}
+
 void UPhotograph::ExportImage(FString folder) {
 	FString filePath = folder + "/" + FDateTime::Now().ToString() + ".png";
 	FFileHelper::SaveArrayToFile(GetImagePNG(), *filePath);

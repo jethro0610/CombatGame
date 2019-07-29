@@ -6,3 +6,7 @@ UPhotoTargetComponent::UPhotoTargetComponent() {
 
 }
 
+FPhotoTargetInfo UPhotoTargetComponent::GetTargetInfo() {
+	return targetInfo;
+}
+
