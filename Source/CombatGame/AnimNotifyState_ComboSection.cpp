@@ -1,10 +1,12 @@
 #include "AnimNotifyState_ComboSection.h"
 
 void UAnimNotifyState_ComboSection::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
+	// Set the owning player object
 	if(owningPlayer == nullptr)
 		owningPlayer = Cast<APlayerPawn, AActor>(MeshComponent->GetOwner());
 	
 	if (owningPlayer != nullptr) {
+		// Bind delegate
 		owningPlayer->OnAttack.RemoveDynamic(this, &UAnimNotifyState_ComboSection::OnPawnAttack);
 		owningPlayer->OnAttack.AddDynamic(this, &UAnimNotifyState_ComboSection::OnPawnAttack);
 		owningPlayer->EnableCombo();

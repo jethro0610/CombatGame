@@ -29,7 +29,13 @@ void UPhotoComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// Log all photograph targets
+	for (int p = 0; p < photographs.Num(); p++) {
+		TArray<FPhotoTargetInfo> photoTargets = photographs[p]->GetPhotoTargets();
+		for (int i = 0; i < photoTargets.Num(); i++) {
+			GEngine->AddOnScreenDebugMessage(-1, DeltaTime, photoTargets[i].color, photoTargets[i].name.ToString());
+		}
+	}
 }
 
 void UPhotoComponent::TakePhoto() {
@@ -53,6 +59,7 @@ float UPhotoComponent::GetActorRenderTimeDifference(AActor* actorToCheck, float 
 }
 
 bool UPhotoComponent::ActorHasBeenRendered(AActor* actorToCheck, float currentTime) {
+	// Run a raycast to the player to determine if it hit
 	FCollisionQueryParams queryParams;
 	FHitResult hitResult;
 	queryParams.AddIgnoredActor(GetOwner());
@@ -80,6 +87,7 @@ bool UPhotoComponent::ActorIsWithinViewport(AActor* actorToCheck) {
 }
 
 TArray<UPhotoTargetComponent*> UPhotoComponent::GetTargetsInView() {
+	// Return targets in view based raycast and position
 	TArray<UPhotoTargetComponent*> photoTargets;
 	FViewport* viewport = GEngine->GameViewport->Viewport;
 	float currentTime = UGameplayStatics::GetTimeSeconds(GetWorld());

@@ -11,6 +11,7 @@ UPhotograph::UPhotograph() {
 
 void UPhotograph::UpdateImage(int newWidth, int newHeight, TArray<FColor> newImage) {
 	if (image != nullptr) {
+		// Remove old image from memory
 		image->ConditionalBeginDestroy();
 		image = nullptr;
 	}
@@ -39,9 +40,11 @@ void UPhotograph::UpdateImageFromPNG(int pngWidth, int pngHeight, TArray<uint8> 
 	image = UTexture2D::CreateTransient(imageWidth, imageHeight, PF_B8G8R8A8);
 	image->MipGenSettings = TMGS_NoMipmaps;
 
+	// Wrapper for conversion
 	IImageWrapperModule &ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"));
 	TSharedPtr<IImageWrapper> ImageWrapper = ImageWrapperModule.CreateImageWrapper(EImageFormat::PNG);
 
+	// Decompress the image from png screenshot
 	ImageWrapper->SetCompressed(pngArray.GetData(), pngArray.Num());
 	const TArray<uint8>* decompressedImage = NULL;
 	ImageWrapper->GetRaw(ERGBFormat::BGRA, 8, decompressedImage);

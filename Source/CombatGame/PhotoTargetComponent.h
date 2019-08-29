@@ -10,10 +10,10 @@ USTRUCT(BlueprintType)
 struct FPhotoTargetInfo {
 	GENERATED_BODY();
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 		FName name;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 		FColor color;
 };
 

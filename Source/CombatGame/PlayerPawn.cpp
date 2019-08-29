@@ -236,7 +236,8 @@ void APlayerPawn::InputDisablePhotoMode() {
 }
 
 void APlayerPawn::InputTakePhoto() {
-	photoComponent->TakePhoto();
+	if(bPhotoMode)
+		photoComponent->TakePhoto();
 }
 
 void APlayerPawn::PlayerEnterGround() {

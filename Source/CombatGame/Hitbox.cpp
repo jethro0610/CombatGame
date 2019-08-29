@@ -18,6 +18,7 @@ void UHitbox::OnBeginOverlap(UPrimitiveComponent* overlappedComp, AActor* otherA
 			UHurtbox* connectingHurtbox = Cast<UHurtbox, UPrimitiveComponent>(otherComp);
 			if (connectingHurtbox != nullptr) {
 				if (!contactedHurtboxes.Contains(connectingHurtbox)) {
+					// Apply hitbox overlap if it hasn't been overlapped already
 					contactedHurtboxes.Add(connectingHurtbox);
 					combatComponent->OnLandAttack.Broadcast(this, connectingHurtbox, sweepResult);
 				}

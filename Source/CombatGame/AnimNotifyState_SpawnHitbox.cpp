@@ -9,9 +9,11 @@ UAnimNotifyState_SpawnHitbox::UAnimNotifyState_SpawnHitbox() {
 }
 
 void UAnimNotifyState_SpawnHitbox::NotifyBegin(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence, float TotalDuration) {
+	// Set the owning pawn object
 	if (owningPawn == nullptr)
 		owningPawn = Cast<ACombatPawn,AActor>(MeshComponent->GetOwner());
 
+	// Spawn the hitbox
 	if(owningPawn != nullptr)
 		spawnedHitbox = owningPawn->GetCombatComponent()->SpawnHitbox(MeshComponent, socket, offset, rotation, length, width, hitGroup, damage, horizontalKnockback, verticalKnockback);
 
@@ -22,6 +24,7 @@ void UAnimNotifyState_SpawnHitbox::NotifyTick(USkeletalMeshComponent* MeshCompon
 	currentMeshComponent = MeshComponent;
 	currentAnimation = Cast<UAnimMontage, UAnimSequenceBase>(AnimationSequence);
 
+	// Start drawing the hitbox for debug
 	for (int i = 0; i < currentMeshComponent->GetAnimInstance()->ActiveAnimNotifyState.Num(); i++) {
 		if (currentMeshComponent->GetAnimInstance()->ActiveAnimNotifyState[i].NotifyStateClass == this) {
 			notifyStartTime = currentMeshComponent->GetAnimInstance()->ActiveAnimNotifyState[i].GetTriggerTime();
@@ -33,6 +36,7 @@ void UAnimNotifyState_SpawnHitbox::NotifyTick(USkeletalMeshComponent* MeshCompon
 }
 
 void UAnimNotifyState_SpawnHitbox::NotifyEnd(USkeletalMeshComponent* MeshComponent, UAnimSequenceBase* AnimationSequence) {
+	// Remove the hitbox
 	if (spawnedHitbox != nullptr) {
 		spawnedHitbox->DeleteHitbox();
 		spawnedHitbox = nullptr;
@@ -45,6 +49,7 @@ void UAnimNotifyState_SpawnHitbox::Tick(float DeltaTime) {
 		float currentTime = currentMeshComponent->GetAnimInstance()->Montage_GetPosition(currentAnimation.Get());
 
 		if (currentTime >= notifyStartTime && currentTime <= notifyEndTime) {
+			// Draw the hitbox for debug along bone transform
 			FTransform socketTransform = currentMeshComponent->GetSocketTransform(socket);
 			FVector colliderPosition = socketTransform.TransformPosition(offset/socketTransform.GetScale3D());
 			FQuat colliderRotation = socketTransform.TransformRotation(rotation.Quaternion());

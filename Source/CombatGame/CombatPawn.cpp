@@ -19,6 +19,7 @@ ACombatPawn::ACombatPawn()
 }
 
 void ACombatPawn::OnConstruction(const FTransform &Transform) {
+	// Rotate the mesh properly
 	skeletalMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -collisionCapsule->GetUnscaledCapsuleHalfHeight()));
 }
 
@@ -39,14 +40,17 @@ void ACombatPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Move with animation root motion
 	if (bApplyRootMotion && movementComponent != nullptr && skeletalMesh != nullptr) {
 		FTransform rootTransform = skeletalMesh->ConsumeRootMotion().GetRootMotionTransform();
 		movementComponent->Move(skeletalMesh->GetComponentRotation().RotateVector(rootTransform.GetLocation()));
 	}
 
+	// Reset the attack montage
 	if (currentAttackMontage != nullptr && GetCurrentMontage() == nullptr)
 		currentAttackMontage = nullptr;
 
+	// Slow down animation in hitlag
 	if (GetCurrentMontage() != nullptr) {
 		if (movementComponent->IsInHitlag()) {
 			GetCurrentMontage()->RateScale = animationHitlagSpeed;
@@ -56,6 +60,7 @@ void ACombatPawn::Tick(float DeltaTime)
 		}
 	}
 
+	// Interpolate mesh location
 	skeletalMesh->SetWorldLocation(movementComponent->GetInterpolatedPosition() + modelOffset);
 }
 
@@ -66,6 +71,7 @@ bool ACombatPawn::SetActorRotation(FRotator newRotator, ETeleportType teleportTy
 
 void ACombatPawn::HitByAttack(UHurtbox* hitCollider, UHitbox* attackingCollider, FHitResult hitResult) {
 	if (bRecieveKnockback) {
+		// Give knockback when hit
 		movementComponent->ApplyKnockback(combatComponent->GetKnockbackVector(hitCollider, attackingCollider));
 		movementComponent->ApplyHitlag(hitlagLength);
 	}
@@ -107,6 +113,7 @@ bool ACombatPawn::IsAttacking() {
 }
 
 void ACombatPawn::DoAttackMontage(UAnimMontage* attackMontage, bool interruptCurrentAttack) {
+	// Play attack animation
 	if (!IsAttacking() || interruptCurrentAttack) {
 		skeletalMesh->GetAnimInstance()->Montage_Play(attackMontage);
 		currentAttackMontage = attackMontage;

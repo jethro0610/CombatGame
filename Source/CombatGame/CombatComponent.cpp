@@ -23,6 +23,7 @@ bool UCombatComponent::HasContactedHitbox(UHitbox* hitbox) {
 }
 
 FVector UCombatComponent::GetKnockbackVector(UHurtbox* hitCollider, UHitbox* attackingCollider){
+	// Calculate knockback vector
 	FVector horizontalVector = hitCollider->GetOwner()->GetActorLocation() - attackingCollider->GetOwner()->GetActorLocation();
 	horizontalVector = horizontalVector.GetClampedToSize(1.0f, 1.0f) * attackingCollider->GetHorizontalKnockback();
 	horizontalVector = FVector(horizontalVector.X, horizontalVector.Y, 0.0f);
@@ -40,7 +41,7 @@ UHitbox* UCombatComponent::SpawnHitbox(USceneComponent* parentComponent, FName s
 	spawnedHitbox->SetHitGroup(hitGroup);
 	spawnedHitbox->SetDamage(damage);
 	spawnedHitbox->SetKnockback(horizontalKnocback, verticalKnockback);
-	spawnedHitbox->RegisterComponent();
+	spawnedHitbox->RegisterComponent(); // Add the component to the world
 
 	return spawnedHitbox;
 }
