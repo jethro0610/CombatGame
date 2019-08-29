@@ -24,6 +24,7 @@ void UVelocityMovementComponent::BeginPlay()
 void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	// Set speed in hitlag
 	float speed = 1.0f;
 	if (currentHitlag <= 0.0f) {
 		currentHitlag = 0.0f;
@@ -32,7 +33,10 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		currentHitlag -= DeltaTime;
 		speed = speedInHitlag;
 	}
+
+	// Add to substep bank by delta time (time between frames)
 	substepBank += ((DeltaTime) / (1.0f / substepTickRate)) * speed;
+	// Tick if bank is greater than 1
 	int numberOfTicks = FMath::RoundFromZero(substepBank);
 	if (substepBank >= 1.0f) {
 		substepBank -= numberOfTicks;
@@ -43,6 +47,8 @@ void UVelocityMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	for (int i = 0; i < numberOfTicks; i++) {
 		CalculateMovement();
 	}
+
+	// Interpolate to midpoint of true position and last one
 	desiredMovement = FVector::ZeroVector;
 	interpolatedPosition = FMath::Lerp(previousPosition, currentPosition, substepBank);
 }
@@ -51,18 +57,23 @@ void UVelocityMovementComponent::CalculateMovement() {
 	substepTime = GetWorld()->TimeSeconds;
 	if (IsOnGround()) {
 		if (!bInHitstun) {
+			// Move and apply friction
 			AddVelocity(desiredMovement * acceleration);
 			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - friction));
 		}
 		else {
+			// Decrease knockback
 			SetVelocityNoGravity(GetVelocityNoGravity() / (1.0f + (knockbackResistance / 100.0f)));
 			if (GetVelocityNoGravity().Size() <= 0.1f) {
+				// End stun on landing
 				bInHitstun = false;
 			}
 		}
+		// Clamp gravity
 		if (GetGravity() > 0.0f)
 			SetGravity(0.0f);
 
+		// Ground delegate detection
 		if (!bGroundedLastFrame) {
 			bGroundedLastFrame = true;
 			OnEnterGround.Broadcast();
@@ -70,13 +81,16 @@ void UVelocityMovementComponent::CalculateMovement() {
 	}
 	else {
 		if (!bInHitstun && CanMoveInAir()) {
+			// Move and apply friction
 			AddVelocity(desiredMovement * aerialAcceleration);
 			SetVelocityNoGravity(GetVelocityNoGravity() * (1.0f - aerialFriction));
 		}
 
+		// Apply gravity
 		if (bGravityEnabled)
 			AddGravity(gravitySpeed);
 
+		// Decrease knockback
 		if (bInHitstun) {
 			if (GetGravity() < -currentVerticalKnockback / (knockbackResistance / 1.5f)) {
 				SetGravity(GetGravity() / (1.0f + (knockbackResistance / 100.0f)));
@@ -87,6 +101,7 @@ void UVelocityMovementComponent::CalculateMovement() {
 			}
 		}
 
+		// Jump physics
 		if (bIsJumping) {
 			if (GetGravity() < 0.0f) {
 				SetGravity(GetGravity() / (1.0f + (jumpResistance / 100.0f)));
@@ -96,13 +111,16 @@ void UVelocityMovementComponent::CalculateMovement() {
 			}
 		}
 
+		// Ground delegate detection
 		if (bGroundedLastFrame) {
 			bGroundedLastFrame = false;
 			OnLeaveGround.Broadcast();
 		}
 	}
+	// Apply velocity
 	Move(velocity);
 
+	// Interpolate rotation
 	FRotator currentDesiredRotation = desiredRotation;
 	FRotator lerpRotation = FQuat::Slerp(GetOwner()->GetActorRotation().Quaternion(), desiredRotation.Quaternion(), 1.0f - FMath::Exp(-rotationSpeed)).Rotator();
 	GetOwner()->SetActorRotation(lerpRotation);
